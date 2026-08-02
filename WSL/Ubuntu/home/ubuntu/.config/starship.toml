@@ -1,0 +1,62 @@
+add_newline = true
+palette = "vscode_black"
+
+format = "$os$directory$git_branch$git_status$fill$cmd_duration$line_break$character"
+right_format = "$status$time"
+
+[os]
+disabled = false
+style = "bold mauve"
+format = "[$symbol]($style)"
+
+[os.symbols]
+Ubuntu = "  "
+Linux = "  "
+
+[directory]
+style = "bold blue"
+format = "[󰉋  $path]($style) "
+truncation_length = 4
+truncate_to_repo = false
+read_only = " 󰌾"
+
+[git_branch]
+symbol = " "
+style = "bold mauve"
+format = "on [$symbol$branch]($style) "
+
+[git_status]
+style = "bold red"
+format = "([$all_status$ahead_behind]($style) )"
+
+[cmd_duration]
+min_time = 1500
+style = "yellow"
+format = "[󱎫 $duration]($style) "
+
+[status]
+disabled = false
+style = "bold red"
+format = "[$symbol$status]($style) "
+
+[time]
+disabled = false
+time_format = "%H:%M"
+style = "dim"
+format = "[ $time]($style)"
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold mauve)"
+
+[fill]
+symbol = " "
+
+[palettes.vscode_black]
+blue = "#82aaff"
+mauve = "#c792ea"
+red = "#ff6b6b"
+yellow = "#ffd700"
+green = "#8bd49c"
+dim = "#8b8f96"

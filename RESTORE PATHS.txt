@@ -1,0 +1,79 @@
+CONFIG BACKUP RESTORE PATHS
+===========================
+
+Backup folder:
+C:\Users\kaura\OneDrive\Desktop\my-config-backup
+
+HOW TO RESTORE A FILE
+---------------------
+
+1. Close the application that uses the configuration.
+2. Make a copy of the current live file before replacing it.
+3. Open this backup folder and locate the file in the left column below.
+4. Copy it to the destination in the right column and allow Windows to replace the file.
+5. Restart the application.
+
+You normally only need to restore the individual file that is broken.
+
+
+WINDOWS CONFIGURATIONS
+----------------------
+
+Backup: Windows\Alacritty\alacritty.toml
+Paste at: C:\Users\kaura\AppData\Roaming\alacritty\alacritty.toml
+
+Backup: Windows\Neovim\init.lua
+Paste at: C:\Users\kaura\AppData\Local\nvim\init.lua
+
+Backup: Windows\Neovim\colors\vscode_black.lua
+Paste at: C:\Users\kaura\AppData\Local\nvim\colors\vscode_black.lua
+
+Neovim language-server dependency folder:
+C:\Users\kaura\AppData\Local\nvim-tools
+
+This folder contains clangd 22.1.0, portable Temurin Java 21, and Eclipse
+JDT LS 1.60.0. The configuration backup contains the Neovim settings, but
+the large downloaded language-server binaries are intentionally not duplicated.
+
+Backup: Windows\PowerShell\Microsoft.PowerShell_profile.ps1
+Paste at: C:\Users\kaura\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+
+Backup: Windows\Starship\starship.toml
+Paste at: C:\Users\kaura\.config\starship.toml
+
+Backup: Windows\Git\.gitconfig
+Paste at: C:\Users\kaura\.gitconfig
+
+Backup: Windows\Yazi\keymap.toml
+Paste at: C:\Users\kaura\AppData\Roaming\yazi\config\keymap.toml
+
+Backup: Windows\Windows Terminal\settings.json
+Paste at: C:\Users\kaura\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
+
+Backup folder: Windows\Windows Terminal\wallpapers
+Paste its files into: C:\Users\kaura\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\wallpapers
+
+
+WSL / UBUNTU CONFIGURATIONS
+---------------------------
+
+WSL files can be restored through File Explorer while Ubuntu is running.
+
+Backup: WSL\Ubuntu\home\ubuntu\.bashrc
+Paste at: \\wsl.localhost\Ubuntu\home\ubuntu\.bashrc
+
+Backup: WSL\Ubuntu\home\ubuntu\.config\starship.toml
+Paste at: \\wsl.localhost\Ubuntu\home\ubuntu\.config\starship.toml
+
+After restoring .bashrc, open Ubuntu and run:
+source ~/.bashrc
+
+
+REFERENCE DOCUMENTS
+-------------------
+
+Documentation\alacrity and nvim configurations.txt
+Documentation\WSL utilities and configurations.txt
+
+The file all-config-files.patch.txt contains patch-style copies of every
+text configuration and records binary wallpaper files without changing them.

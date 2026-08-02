@@ -1,0 +1,260 @@
+ALACRITTY AND NEOVIM CONFIGURATIONS
+===================================
+
+This document lists the configuration files and terminal features added to this Windows setup.
+
+
+1. ALACRITTY
+------------
+
+File name:
+alacritty.toml
+
+Full path:
+C:\Users\kaura\AppData\Roaming\alacritty\alacritty.toml
+
+Features configured:
+- Alacritty launches PowerShell 7 (pwsh.exe).
+- Starts maximized with no window decorations.
+- Neutral VS Code-inspired black palette with gray text and restrained colour accents.
+- JetBrainsMono Nerd Font with regular, bold, italic, and bold-italic styles.
+- Window padding of 14 pixels horizontally and 12 pixels vertically.
+- Background opacity of 0.96. This is slight translucency, not Windows acrylic blur.
+- 50,000-line scrollback history.
+- Blinking beam cursor.
+- Selected text is copied to the clipboard.
+- Mouse pointer hides while typing.
+- Live configuration reload.
+
+Alacritty shortcuts:
+- Ctrl+Shift+C: Copy
+- Ctrl+Shift+V: Paste
+- Ctrl+Shift+N: Open another Alacritty window
+- F11: Toggle fullscreen
+- Ctrl+=: Increase font size
+- Ctrl+-: Decrease font size
+- Ctrl+0: Reset font size
+
+
+2. NEOVIM
+---------
+
+File name:
+init.lua
+
+Full path:
+C:\Users\kaura\AppData\Local\nvim\init.lua
+
+Features configured:
+- Custom vscode_black colour scheme matching the reference VS Code screenshot.
+- Near-black background with pink keywords, blue strings, violet functions, amber punctuation, and subtle gray UI elements.
+- Absolute current-line number with relative numbers on surrounding lines.
+- Four-space soft indentation with spaces instead of tab characters.
+- Smart case-sensitive searching: lowercase searches ignore case; uppercase searches respect case.
+- Persistent undo history between Neovim sessions.
+- Windows clipboard integration.
+- Highlighted cursor line and a permanent sign column.
+- Six-line scroll margin around the cursor.
+- New horizontal and vertical splits open below and to the right.
+- Long code lines do not wrap.
+- Escape clears search highlighting.
+- Copied text is briefly highlighted.
+- Automatically closes (), [], {}, double quotes, single quotes, and backticks.
+- Closing characters step over an existing match instead of duplicating it.
+- Backspace inside an empty pair removes both characters.
+- Enter between curly braces creates an indented line.
+- IDE-style red errors, yellow warnings, signs, undercurls, inline messages, and rounded diagnostic detail windows.
+- Built-in LSP diagnostics for JavaScript, TypeScript, JSX/TSX, JSON, HTML, CSS/SCSS/Less, and Python.
+- Diagnostic navigation: `]d` next, `[d` previous, Space+d details, and Space+q problem list.
+- Space is the Neovim leader key. The language servers are installed under C:\Users\kaura\AppData\Roaming\npm\node_modules.
+- TypeScript is pinned to 5.9.3 because the installed language server requires its compatible tsserver engine.
+- ESLint 9 linting is enabled for JavaScript, JSX, TypeScript, and TSX projects that contain an ESLint configuration.
+- Code and real-file import-path suggestions appear automatically. Ctrl+Space opens them manually, Ctrl+Y accepts one, and Ctrl+E closes the menu.
+- Missing relative import paths such as `./pages/MissingPage` are highlighted as errors by the TypeScript language server.
+- C and C++ diagnostics, completion, navigation, and clang-tidy checks use clangd 22.1.0.
+- Java diagnostics, completion, and navigation use Eclipse JDT LS 1.60.0 with a private portable Temurin Java 21 runtime.
+- React JSX/TSX is checked by the TypeScript and ESLint servers; Python is checked by Pyright.
+- C/C++ and Java also work for standalone files outside a project. Java's first startup can take around 30 seconds while its workspace is created.
+- Neovim-only language tools are stored under C:\Users\kaura\AppData\Local\nvim-tools and do not replace the system Java 8 installation.
+- Removes Neovim's separate background colour.
+- Normal, inactive, sign-column, and end-of-buffer backgrounds use Alacritty's background.
+- Reapplies the background adjustment whenever the Neovim colour scheme changes.
+- This makes Neovim blend with Alacritty while preserving Alacritty's window padding.
+
+
+3. POWERSHELL 7 PROFILE
+-----------------------
+
+File name:
+Microsoft.PowerShell_profile.ps1
+
+Full path:
+C:\Users\kaura\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+
+Features configured:
+- Starship prompt initialization.
+- UTF-8 terminal output.
+- PowerShell history suggestions.
+- Up/Down arrows search matching command history.
+- Ctrl+R opens fuzzy command-history search.
+- zoxide smart directory navigation.
+- fzf VS Code-inspired colours and fd-powered file discovery.
+- Unix-style ls through eza.
+- Yazi directory-changing wrapper.
+- Yazi MIME detection through Git for Windows file.exe (`YAZI_FILE_ONE`).
+- Yazi `Shift+E` shortcut opens the highlighted file in Neovim in a new Alacritty window.
+- Convenient aliases for Lazygit, bottom, and Fastfetch.
+- Neovim fuzzy file opener.
+
+PowerShell commands:
+- ls -la: Unix-style detailed listing including hidden files
+- ll: Detailed file listing
+- la: Detailed listing including hidden files
+- lt: Two-level directory tree
+- z NAME: Jump to a frequently used directory
+- ff: Find a file with fzf and open it in Neovim
+- lg: Open Lazygit
+- y: Open Yazi and follow its final directory when it exits
+- top: Open the bottom system monitor
+- fetch: Show system information with Fastfetch
+- bat FILE: View a file with highlighting and line numbers
+- rg TEXT: Search inside files
+- fd NAME: Find files and directories
+
+Reload the PowerShell profile without restarting Alacritty:
+. $PROFILE
+
+
+4. STARSHIP PROMPT
+------------------
+
+File name:
+starship.toml
+
+Full path:
+C:\Users\kaura\.config\starship.toml
+
+Features configured:
+- VS Code-inspired prompt colours matching Alacritty and Neovim.
+- Current directory.
+- Git branch and repository status.
+- Previous command status.
+- Duration of slower commands.
+- Current time.
+- Nerd Font icons.
+
+
+5. GIT AND DELTA
+----------------
+
+File name:
+.gitconfig
+
+Full path:
+C:\Users\kaura\.gitconfig
+
+Features configured:
+- Delta is the default Git pager.
+- Side-by-side diffs.
+- Line numbers in diffs.
+- Keyboard navigation in diffs.
+- Improved merge-conflict display.
+- Moved-code colouring.
+
+
+6. INSTALLED TERMINAL TOOLS
+---------------------------
+
+- PowerShell 7
+- Starship
+- Neovim
+- Git
+- fzf
+- zoxide
+- eza
+- bat
+- Lazygit
+- Yazi
+- ripgrep
+- fd
+- Delta
+- bottom
+- Fastfetch
+- tmux 3.4 inside Ubuntu WSL
+
+
+7. BACKUPS
+----------
+
+Backups are stored beside their original configuration files.
+
+Backup suffixes created during setup:
+- .backup-20260731-230013
+- .backup-20260731-234634
+
+To restore a backup, remove the .backup-DATE-TIME suffix and replace the current file only after saving a copy of it.
+
+
+8. WINDOWS TERMINAL
+-------------------
+
+File name:
+settings.json
+
+Full path:
+C:\Users\kaura\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
+
+Wallpaper folder:
+C:\Users\kaura\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\wallpapers
+
+Features configured:
+- Neon Noir colour scheme.
+- User-supplied final-terminal-clean.png background, copied without resizing or recompression.
+- Background image opacity of 0.22 while focused and 0.12 while unfocused.
+- Acrylic background blur with terminal opacity of 82% while focused and 90% while unfocused.
+- Translucent acrylic/Mica tab row and compact tabs.
+- JetBrainsMono Nerd Font, hidden scrollbar, bar cursor, and comfortable padding.
+- Two additional downloaded wallpapers are stored as alternatives.
+- Wallpaper source and credit details are saved in wallpaper-credits.txt.
+
+
+WSL / UBUNTU TERMINAL CONFIGURATION
+===================================
+
+Bash configuration:
+\\wsl.localhost\Ubuntu\home\ubuntu\.bashrc
+
+Starship configuration:
+\\wsl.localhost\Ubuntu\home\ubuntu\.config\starship.toml
+
+ble.sh installation:
+\\wsl.localhost\Ubuntu\home\ubuntu\.local\share\blesh\ble.sh
+
+Lazygit installation:
+\\wsl.localhost\Ubuntu\home\ubuntu\.local\bin\lazygit
+
+Latest configuration backup:
+\\wsl.localhost\Ubuntu\home\ubuntu\.config\codex-terminal-backups\20260801-060133
+
+Features configured:
+- Bash inline history suggestions and live syntax highlighting through ble.sh.
+- Compact Ubuntu/Starship prompt with Git branch, status, command duration, exit status, and time.
+- Ctrl+R fuzzy history, Ctrl+T file selection, and Alt+C directory selection through fzf.
+- Smart directory navigation with zoxide (`z folder-name`).
+- Modern eza listings through `ls`, `ll`, `la`, and `lt`.
+- Git shortcuts: `gs`, `gl`, `gd`, and `gds`.
+- Lazygit full-screen Git interface through `lg`.
+- Fast file/content searching with fd and ripgrep.
+- Modern system monitor through `top` (btop).
+
+Utilities that were already present in WSL:
+- Linuxbrew/Homebrew 4.5.4 with Fastfetch, GCC 15.1 and supporting libraries.
+- NVM 0.40.1 with Node.js 22.23.1 as the default and npm 10.9.8.
+- NVM is lazy-loaded by node/npm/npx/nvm to keep WSL shell startup fast.
+- Verified WSL startup improved from approximately 1.02 seconds to 0.27 seconds.
+- Envman with custom local-bin and Go PATH entries.
+- Git 2.43.0, GitHub CLI 2.45.0, Python 3.12, pip 24.0, GCC/G++ 13.3,
+  GNU Make 4.3, Java/Javac 21, Vim 9.1, tmux 3.4 and the Windows VS Code bridge.
+
+Detailed WSL command and utility reference on Desktop:
+C:\Users\kaura\OneDrive\Desktop\WSL utilities and configurations.txt

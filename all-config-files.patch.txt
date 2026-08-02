@@ -1,0 +1,1908 @@
+# COMPLETE CONFIGURATION BACKUP PATCH
+# Regenerated: 2026-08-01 15:06:48 +05:30
+# Restore destinations are listed in RESTORE PATHS.txt.
+# Text files are represented as new files; binary wallpapers are recorded by path.
+
+diff --git a/Documentation/alacrity and nvim configurations.txt b/Documentation/alacrity and nvim configurations.txt
+new file mode 100644
+--- /dev/null
++++ b/Documentation/alacrity and nvim configurations.txt
+@@ -0,0 +1,260 @@
++ALACRITTY AND NEOVIM CONFIGURATIONS
++===================================
++
++This document lists the configuration files and terminal features added to this Windows setup.
++
++
++1. ALACRITTY
++------------
++
++File name:
++alacritty.toml
++
++Full path:
++C:\Users\kaura\AppData\Roaming\alacritty\alacritty.toml
++
++Features configured:
++- Alacritty launches PowerShell 7 (pwsh.exe).
++- Starts maximized with no window decorations.
++- Neutral VS Code-inspired black palette with gray text and restrained colour accents.
++- JetBrainsMono Nerd Font with regular, bold, italic, and bold-italic styles.
++- Window padding of 14 pixels horizontally and 12 pixels vertically.
++- Background opacity of 0.96. This is slight translucency, not Windows acrylic blur.
++- 50,000-line scrollback history.
++- Blinking beam cursor.
++- Selected text is copied to the clipboard.
++- Mouse pointer hides while typing.
++- Live configuration reload.
++
++Alacritty shortcuts:
++- Ctrl+Shift+C: Copy
++- Ctrl+Shift+V: Paste
++- Ctrl+Shift+N: Open another Alacritty window
++- F11: Toggle fullscreen
++- Ctrl+=: Increase font size
++- Ctrl+-: Decrease font size
++- Ctrl+0: Reset font size
++
++
++2. NEOVIM
++---------
++
++File name:
++init.lua
++
++Full path:
++C:\Users\kaura\AppData\Local\nvim\init.lua
++
++Features configured:
++- Custom vscode_black colour scheme matching the reference VS Code screenshot.
++- Near-black background with pink keywords, blue strings, violet functions, amber punctuation, and subtle gray UI elements.
++- Absolute current-line number with relative numbers on surrounding lines.
++- Four-space soft indentation with spaces instead of tab characters.
++- Smart case-sensitive searching: lowercase searches ignore case; uppercase searches respect case.
++- Persistent undo history between Neovim sessions.
++- Windows clipboard integration.
++- Highlighted cursor line and a permanent sign column.
++- Six-line scroll margin around the cursor.
++- New horizontal and vertical splits open below and to the right.
++- Long code lines do not wrap.
++- Escape clears search highlighting.
++- Copied text is briefly highlighted.
++- Automatically closes (), [], {}, double quotes, single quotes, and backticks.
++- Closing characters step over an existing match instead of duplicating it.
++- Backspace inside an empty pair removes both characters.
++- Enter between curly braces creates an indented line.
++- IDE-style red errors, yellow warnings, signs, undercurls, inline messages, and rounded diagnostic detail windows.
++- Built-in LSP diagnostics for JavaScript, TypeScript, JSX/TSX, JSON, HTML, CSS/SCSS/Less, and Python.
++- Diagnostic navigation: `]d` next, `[d` previous, Space+d details, and Space+q problem list.
++- Space is the Neovim leader key. The language servers are installed under C:\Users\kaura\AppData\Roaming\npm\node_modules.
++- TypeScript is pinned to 5.9.3 because the installed language server requires its compatible tsserver engine.
++- ESLint 9 linting is enabled for JavaScript, JSX, TypeScript, and TSX projects that contain an ESLint configuration.
++- Code and real-file import-path suggestions appear automatically. Ctrl+Space opens them manually, Ctrl+Y accepts one, and Ctrl+E closes the menu.
++- Missing relative import paths such as `./pages/MissingPage` are highlighted as errors by the TypeScript language server.
++- C and C++ diagnostics, completion, navigation, and clang-tidy checks use clangd 22.1.0.
++- Java diagnostics, completion, and navigation use Eclipse JDT LS 1.60.0 with a private portable Temurin Java 21 runtime.
++- React JSX/TSX is checked by the TypeScript and ESLint servers; Python is checked by Pyright.
++- C/C++ and Java also work for standalone files outside a project. Java's first startup can take around 30 seconds while its workspace is created.
++- Neovim-only language tools are stored under C:\Users\kaura\AppData\Local\nvim-tools and do not replace the system Java 8 installation.
++- Removes Neovim's separate background colour.
++- Normal, inactive, sign-column, and end-of-buffer backgrounds use Alacritty's background.
++- Reapplies the background adjustment whenever the Neovim colour scheme changes.
++- This makes Neovim blend with Alacritty while preserving Alacritty's window padding.
++
++
++3. POWERSHELL 7 PROFILE
++-----------------------
++
++File name:
++Microsoft.PowerShell_profile.ps1
++
++Full path:
++C:\Users\kaura\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
++
++Features configured:
++- Starship prompt initialization.
++- UTF-8 terminal output.
++- PowerShell history suggestions.
++- Up/Down arrows search matching command history.
++- Ctrl+R opens fuzzy command-history search.
++- zoxide smart directory navigation.
++- fzf VS Code-inspired colours and fd-powered file discovery.
++- Unix-style ls through eza.
++- Yazi directory-changing wrapper.
++- Yazi MIME detection through Git for Windows file.exe (`YAZI_FILE_ONE`).
++- Yazi `Shift+E` shortcut opens the highlighted file in Neovim in a new Alacritty window.
++- Convenient aliases for Lazygit, bottom, and Fastfetch.
++- Neovim fuzzy file opener.
++
++PowerShell commands:
++- ls -la: Unix-style detailed listing including hidden files
++- ll: Detailed file listing
++- la: Detailed listing including hidden files
++- lt: Two-level directory tree
++- z NAME: Jump to a frequently used directory
++- ff: Find a file with fzf and open it in Neovim
++- lg: Open Lazygit
++- y: Open Yazi and follow its final directory when it exits
++- top: Open the bottom system monitor
++- fetch: Show system information with Fastfetch
++- bat FILE: View a file with highlighting and line numbers
++- rg TEXT: Search inside files
++- fd NAME: Find files and directories
++
++Reload the PowerShell profile without restarting Alacritty:
++. $PROFILE
++
++
++4. STARSHIP PROMPT
++------------------
++
++File name:
++starship.toml
++
++Full path:
++C:\Users\kaura\.config\starship.toml
++
++Features configured:
++- VS Code-inspired prompt colours matching Alacritty and Neovim.
++- Current directory.
++- Git branch and repository status.
++- Previous command status.
++- Duration of slower commands.
++- Current time.
++- Nerd Font icons.
++
++
++5. GIT AND DELTA
++----------------
++
++File name:
++.gitconfig
++
++Full path:
++C:\Users\kaura\.gitconfig
++
++Features configured:
++- Delta is the default Git pager.
++- Side-by-side diffs.
++- Line numbers in diffs.
++- Keyboard navigation in diffs.
++- Improved merge-conflict display.
++- Moved-code colouring.
++
++
++6. INSTALLED TERMINAL TOOLS
++---------------------------
++
++- PowerShell 7
++- Starship
++- Neovim
++- Git
++- fzf
++- zoxide
++- eza
++- bat
++- Lazygit
++- Yazi
++- ripgrep
++- fd
++- Delta
++- bottom
++- Fastfetch
++- tmux 3.4 inside Ubuntu WSL
++
++
++7. BACKUPS
++----------
++
++Backups are stored beside their original configuration files.
++
++Backup suffixes created during setup:
++- .backup-20260731-230013
++- .backup-20260731-234634
++
++To restore a backup, remove the .backup-DATE-TIME suffix and replace the current file only after saving a copy of it.
++
++
++8. WINDOWS TERMINAL
++-------------------
++
++File name:
++settings.json
++
++Full path:
++C:\Users\kaura\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
++
++Wallpaper folder:
++C:\Users\kaura\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\wallpapers
++
++Features configured:
++- Neon Noir colour scheme.
++- User-supplied final-terminal-clean.png background, copied without resizing or recompression.
++- Background image opacity of 0.22 while focused and 0.12 while unfocused.
++- Acrylic background blur with terminal opacity of 82% while focused and 90% while unfocused.
++- Translucent acrylic/Mica tab row and compact tabs.
++- JetBrainsMono Nerd Font, hidden scrollbar, bar cursor, and comfortable padding.
++- Two additional downloaded wallpapers are stored as alternatives.
++- Wallpaper source and credit details are saved in wallpaper-credits.txt.
++
++
++WSL / UBUNTU TERMINAL CONFIGURATION
++===================================
++
++Bash configuration:
++\\wsl.localhost\Ubuntu\home\ubuntu\.bashrc
++
++Starship configuration:
++\\wsl.localhost\Ubuntu\home\ubuntu\.config\starship.toml
++
++ble.sh installation:
++\\wsl.localhost\Ubuntu\home\ubuntu\.local\share\blesh\ble.sh
++
++Lazygit installation:
++\\wsl.localhost\Ubuntu\home\ubuntu\.local\bin\lazygit
++
++Latest configuration backup:
++\\wsl.localhost\Ubuntu\home\ubuntu\.config\codex-terminal-backups\20260801-060133
++
++Features configured:
++- Bash inline history suggestions and live syntax highlighting through ble.sh.
++- Compact Ubuntu/Starship prompt with Git branch, status, command duration, exit status, and time.
++- Ctrl+R fuzzy history, Ctrl+T file selection, and Alt+C directory selection through fzf.
++- Smart directory navigation with zoxide (`z folder-name`).
++- Modern eza listings through `ls`, `ll`, `la`, and `lt`.
++- Git shortcuts: `gs`, `gl`, `gd`, and `gds`.
++- Lazygit full-screen Git interface through `lg`.
++- Fast file/content searching with fd and ripgrep.
++- Modern system monitor through `top` (btop).
++
++Utilities that were already present in WSL:
++- Linuxbrew/Homebrew 4.5.4 with Fastfetch, GCC 15.1 and supporting libraries.
++- NVM 0.40.1 with Node.js 22.23.1 as the default and npm 10.9.8.
++- NVM is lazy-loaded by node/npm/npx/nvm to keep WSL shell startup fast.
++- Verified WSL startup improved from approximately 1.02 seconds to 0.27 seconds.
++- Envman with custom local-bin and Go PATH entries.
++- Git 2.43.0, GitHub CLI 2.45.0, Python 3.12, pip 24.0, GCC/G++ 13.3,
++  GNU Make 4.3, Java/Javac 21, Vim 9.1, tmux 3.4 and the Windows VS Code bridge.
++
++Detailed WSL command and utility reference on Desktop:
++C:\Users\kaura\OneDrive\Desktop\WSL utilities and configurations.txt
+
+diff --git a/Documentation/WSL utilities and configurations.txt b/Documentation/WSL utilities and configurations.txt
+new file mode 100644
+--- /dev/null
++++ b/Documentation/WSL utilities and configurations.txt
+@@ -0,0 +1,184 @@
++WSL / UBUNTU UTILITIES AND CONFIGURATIONS
++=========================================
++
++System:
++- Distribution: Ubuntu 24.04.4 LTS on WSL 2
++- Linux user: ubuntu
++- Home folder: /home/ubuntu
++- Default shell: Bash
++
++
++MAIN CONFIGURATION PATHS
++------------------------
++
++Bash startup file:
++\\wsl.localhost\Ubuntu\home\ubuntu\.bashrc
++
++Starship prompt:
++\\wsl.localhost\Ubuntu\home\ubuntu\.config\starship.toml
++
++Envman loader and data:
++\\wsl.localhost\Ubuntu\home\ubuntu\.config\envman
++
++ble.sh command suggestions:
++\\wsl.localhost\Ubuntu\home\ubuntu\.local\share\blesh\ble.sh
++
++Lazygit executable:
++\\wsl.localhost\Ubuntu\home\ubuntu\.local\bin\lazygit
++
++Latest pre-change backup:
++\\wsl.localhost\Ubuntu\home\ubuntu\.config\codex-terminal-backups\20260801-060133
++
++Initial WSL-enhancement backup:
++\\wsl.localhost\Ubuntu\home\ubuntu\.config\codex-terminal-backups\20260801-052353
++
++
++TOOLS THAT WERE ALREADY PRESENT
++-------------------------------
++
++Linuxbrew / Homebrew 4.5.4
++- Location: /home/linuxbrew/.linuxbrew
++- Linux package manager independent of Ubuntu's apt.
++- Installed formulas: binutils 2.44, fastfetch 2.44.0, GCC 15.1.0,
++  GMP 6.3.0, ISL 0.27, libmpc 1.3.1, LZ4 1.10.0, MPFR 4.2.2,
++  XZ 5.8.1, zlib 1.3.1 and zstd 1.5.7.
++- brew list                 Show installed Homebrew packages.
++- brew search NAME          Search for a package.
++- brew install NAME         Install a package.
++- brew update               Refresh Homebrew.
++- brew upgrade              Upgrade installed formulas.
++- brew uninstall NAME       Remove a formula.
++
++NVM / Node.js
++- NVM version: 0.40.1
++- Active/default Node.js: 22.23.1
++- npm version: 10.9.8
++- nvm list                  Show installed Node versions.
++- nvm install --lts         Install the current LTS release.
++- nvm use 22                Switch to Node 22.
++- nvm alias default 22      Make Node 22 the default.
++- node --version            Show active Node version.
++- npm --version             Show npm version.
++- Performance: NVM is lazy-loaded. It does not delay shell startup; the first
++  `node`, `npm`, `npx` or `nvm` command initializes it automatically.
++- Verified startup improvement: approximately 1.02 seconds before optimization
++  and 0.27 seconds afterwards.
++
++Envman
++- Loads custom environment variables, PATH entries, aliases and functions.
++- Current PATH additions:
++  $HOME/.local/opt/go/bin
++  $HOME/go/bin
++  $HOME/.local/bin
++- Generated loader: ~/.config/envman/load.sh
++- PATH definitions: ~/.config/envman/PATH.env
++- Other available files: ENV.env, alias.env and function.sh.
++
++Existing development tools
++- Git 2.43.0: source control.
++- GitHub CLI 2.45.0: GitHub operations through the `gh` command.
++- Python 3.12.3 and pip 24.0.
++- Ubuntu GCC/G++ 13.3.0 and GNU Make 4.3.
++- Homebrew GCC 15.1.0 is also installed separately.
++- OpenJDK and javac 21.0.11.
++- Vim 9.1.
++- tmux 3.4 terminal multiplexer.
++- Fastfetch 2.44.0 through Homebrew.
++- Windows VS Code command is available inside WSL as `code`.
++
++
++TOOLS AND CHANGES ADDED BY CODEX
++--------------------------------
++
++ble.sh 0.3.4
++- Inline suggestions from Bash history.
++- Live command syntax highlighting.
++- Use Right Arrow to accept a visible suggestion.
++
++Starship 1.23.0 configuration
++- Compact VS Code-black themed Ubuntu prompt.
++- Shows directory, Git branch/status, slow-command duration, failures and time.
++- Git information only appears while inside a Git repository.
++
++fzf 0.44.1
++- Ctrl+R: fuzzy command-history search.
++- Ctrl+T: fuzzy file selection into the command line.
++- Alt+C: fuzzy folder selection and navigation.
++
++zoxide 0.9.3
++- Learns frequently visited directories.
++- z PROJECT               Jump to a matching remembered directory.
++- zi                      Select a directory interactively.
++
++eza 0.18.2
++- Modern replacement for `ls`.
++- ls                      Normal icon-aware listing.
++- ll                      Detailed listing, hidden files and Git status.
++- la                      Listing including hidden files.
++- lt                      Two-level directory tree.
++
++Git and Lazygit
++- lg                      Open the Lazygit full-screen Git interface.
++- gs                      Short Git status and current branch.
++- gl                      Last 20 commits as a decorated graph.
++- gd                      Show unstaged changes.
++- gds                     Show staged changes.
++- Lazygit version: 0.63.1, installed from its official verified release.
++
++Search and file viewing
++- fd NAME                 Quickly find files by name.
++- rg TEXT                 Search file contents recursively.
++- bat FILE                View a file with syntax highlighting and line numbers.
++
++System monitoring
++- top                     Opens btop instead of the old top interface.
++- btop                    Opens the same modern system monitor directly.
++
++
++EVERYDAY EXAMPLE
++----------------
++
++cd ~/my-project
++gs                         Check branch and changed files.
++ll                         Inspect files and their Git state.
++lg                         Stage, commit, pull and push interactively.
++rg "search text"          Search the project contents.
++z project-name             Jump back to a remembered project.
++
++
++PACKAGE MANAGEMENT
++------------------
++
++Ubuntu apt packages:
++sudo apt update
++sudo apt upgrade
++sudo apt install PACKAGE
++sudo apt remove PACKAGE
++
++Linuxbrew packages:
++brew update
++brew upgrade
++brew install PACKAGE
++
++Node packages:
++npm install PACKAGE
++npm install -g PACKAGE
++npm update
++
++
++CURRENTLY NOT INSTALLED INSIDE WSL
++----------------------------------
++
++- CMake
++- Go executable (Envman has reserved Go PATH locations, but Go is not installed)
++- Rust and Cargo
++- Docker CLI
++- Neovim inside WSL (Windows Neovim remains installed separately)
++
++
++RELOAD AFTER EDITING CONFIGURATION
++----------------------------------
++
++source ~/.bashrc
++
++Opening a fresh Ubuntu/WSL tab is usually cleaner after major changes.
+
+diff --git a/RESTORE PATHS.txt b/RESTORE PATHS.txt
+new file mode 100644
+--- /dev/null
++++ b/RESTORE PATHS.txt
+@@ -0,0 +1,79 @@
++CONFIG BACKUP RESTORE PATHS
++===========================
++
++Backup folder:
++C:\Users\kaura\OneDrive\Desktop\my-config-backup
++
++HOW TO RESTORE A FILE
++---------------------
++
++1. Close the application that uses the configuration.
++2. Make a copy of the current live file before replacing it.
++3. Open this backup folder and locate the file in the left column below.
++4. Copy it to the destination in the right column and allow Windows to replace the file.
++5. Restart the application.
++
++You normally only need to restore the individual file that is broken.
++
++
++WINDOWS CONFIGURATIONS
++----------------------
++
++Backup: Windows\Alacritty\alacritty.toml
++Paste at: C:\Users\kaura\AppData\Roaming\alacritty\alacritty.toml
++
++Backup: Windows\Neovim\init.lua
++Paste at: C:\Users\kaura\AppData\Local\nvim\init.lua
++
++Backup: Windows\Neovim\colors\vscode_black.lua
++Paste at: C:\Users\kaura\AppData\Local\nvim\colors\vscode_black.lua
++
++Neovim language-server dependency folder:
++C:\Users\kaura\AppData\Local\nvim-tools
++
++This folder contains clangd 22.1.0, portable Temurin Java 21, and Eclipse
++JDT LS 1.60.0. The configuration backup contains the Neovim settings, but
++the large downloaded language-server binaries are intentionally not duplicated.
++
++Backup: Windows\PowerShell\Microsoft.PowerShell_profile.ps1
++Paste at: C:\Users\kaura\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
++
++Backup: Windows\Starship\starship.toml
++Paste at: C:\Users\kaura\.config\starship.toml
++
++Backup: Windows\Git\.gitconfig
++Paste at: C:\Users\kaura\.gitconfig
++
++Backup: Windows\Yazi\keymap.toml
++Paste at: C:\Users\kaura\AppData\Roaming\yazi\config\keymap.toml
++
++Backup: Windows\Windows Terminal\settings.json
++Paste at: C:\Users\kaura\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
++
++Backup folder: Windows\Windows Terminal\wallpapers
++Paste its files into: C:\Users\kaura\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\wallpapers
++
++
++WSL / UBUNTU CONFIGURATIONS
++---------------------------
++
++WSL files can be restored through File Explorer while Ubuntu is running.
++
++Backup: WSL\Ubuntu\home\ubuntu\.bashrc
++Paste at: \\wsl.localhost\Ubuntu\home\ubuntu\.bashrc
++
++Backup: WSL\Ubuntu\home\ubuntu\.config\starship.toml
++Paste at: \\wsl.localhost\Ubuntu\home\ubuntu\.config\starship.toml
++
++After restoring .bashrc, open Ubuntu and run:
++source ~/.bashrc
++
++
++REFERENCE DOCUMENTS
++-------------------
++
++Documentation\alacrity and nvim configurations.txt
++Documentation\WSL utilities and configurations.txt
++
++The file all-config-files.patch.txt contains patch-style copies of every
++text configuration and records binary wallpaper files without changing them.
+
+diff --git a/Windows/Alacritty/alacritty.toml b/Windows/Alacritty/alacritty.toml
+new file mode 100644
+--- /dev/null
++++ b/Windows/Alacritty/alacritty.toml
+@@ -0,0 +1,122 @@
++[general]
++live_config_reload = true
++working_directory = "C:\\Users\\kaura"
++
++[env]
++TERM = "xterm-256color"
++
++[window]
++startup_mode = "Maximized"
++decorations = "None"
++padding = { x = 14, y = 12 }
++dynamic_padding = true
++opacity = 0.96
++title = "Terminal"
++dynamic_title = true
++
++[scrolling]
++history = 50000
++multiplier = 3
++
++[font]
++normal = { family = "JetBrainsMono NF", style = "Regular" }
++bold = { family = "JetBrainsMono NF", style = "Bold" }
++italic = { family = "JetBrainsMono NF", style = "Italic" }
++bold_italic = { family = "JetBrainsMono NF", style = "Bold Italic" }
++size = 11.5
++offset = { x = 0, y = 1 }
++
++[terminal.shell]
++program = "pwsh.exe"
++args = ["-NoLogo", "-NoExit"]
++
++[cursor]
++style = { shape = "Beam", blinking = "On" }
++blink_interval = 550
++blink_timeout = 0
++unfocused_hollow = true
++thickness = 0.18
++
++[selection]
++save_to_clipboard = true
++
++[mouse]
++hide_when_typing = true
++
++# VS Code-inspired neutral black palette
++
++[colors.primary]
++background = "#0f1113"
++foreground = "#d4d4d4"
++dim_foreground = "#8b8f96"
++bright_foreground = "#f0f0f0"
++
++[colors.cursor]
++text = "#0f1113"
++cursor = "#d4d4d4"
++
++[colors.vi_mode_cursor]
++text = "#0f1113"
++cursor = "#c792ea"
++
++[colors.selection]
++text = "#f0f0f0"
++background = "#34383e"
++
++[colors.search.matches]
++foreground = "#0f1113"
++background = "#8bd49c"
++
++[colors.search.focused_match]
++foreground = "#0f1113"
++background = "#ffd700"
++
++[colors.footer_bar]
++foreground = "#d4d4d4"
++background = "#202328"
++
++[colors.normal]
++black   = "#17191c"
++red     = "#ff6b6b"
++green   = "#8bd49c"
++yellow  = "#ffd700"
++blue    = "#82aaff"
++magenta = "#c792ea"
++cyan    = "#89ddff"
++white   = "#d4d4d4"
++
++[colors.bright]
++black   = "#5f6368"
++red     = "#ff8585"
++green   = "#a7e3b5"
++yellow  = "#ffe45c"
++blue    = "#a5c2ff"
++magenta = "#dfa8ff"
++cyan    = "#b2ebff"
++white   = "#f0f0f0"
++
++[colors.dim]
++black   = "#101214"
++red     = "#b84d4d"
++green   = "#659b72"
++yellow  = "#b89d00"
++blue    = "#5d78ad"
++magenta = "#8f68a8"
++cyan    = "#639aaa"
++white   = "#8b8f96"
++
++[bell]
++animation = "EaseOutExpo"
++duration = 120
++color = "#e879d2"
++
++[keyboard]
++bindings = [
++    { key = "C", mods = "Control|Shift", action = "Copy" },
++    { key = "V", mods = "Control|Shift", action = "Paste" },
++    { key = "N", mods = "Control|Shift", action = "CreateNewWindow" },
++    { key = "F11", action = "ToggleFullscreen" },
++    { key = "Equals", mods = "Control", action = "IncreaseFontSize" },
++    { key = "Minus", mods = "Control", action = "DecreaseFontSize" },
++    { key = "Key0", mods = "Control", action = "ResetFontSize" }
++]
+
+diff --git a/Windows/Git/.gitconfig b/Windows/Git/.gitconfig
+new file mode 100644
+--- /dev/null
++++ b/Windows/Git/.gitconfig
+@@ -0,0 +1,17 @@
++[user]
++	email = anantkaurav53@gmail.com
++	name = AnantTux
++[safe]
++	directory = D:/Dev Stuff
++[core]
++	pager = delta
++[interactive]
++	diffFilter = delta --color-only
++[delta]
++	navigate = true
++	line-numbers = true
++	side-by-side = true
++[merge]
++	conflictStyle = zdiff3
++[diff]
++	colorMoved = default
+
+diff --git a/Windows/Neovim/colors/vscode_black.lua b/Windows/Neovim/colors/vscode_black.lua
+new file mode 100644
+--- /dev/null
++++ b/Windows/Neovim/colors/vscode_black.lua
+@@ -0,0 +1,138 @@
++vim.cmd("highlight clear")
++if vim.fn.exists("syntax_on") == 1 then
++  vim.cmd("syntax reset")
++end
++
++vim.g.colors_name = "vscode_black"
++
++local colors = {
++  bg = "#0f1113",
++  bg_alt = "#17191c",
++  bg_cursor = "#202328",
++  bg_visual = "#34383e",
++  fg = "#d4d4d4",
++  bright = "#f0f0f0",
++  muted = "#6f737a",
++  comment = "#697078",
++  red = "#ff6b6b",
++  orange = "#ff9e64",
++  yellow = "#ffd700",
++  green = "#8bd49c",
++  cyan = "#89ddff",
++  blue = "#82aaff",
++  violet = "#c792ea",
++  pink = "#e879d2",
++}
++
++local groups = {
++  Normal = { fg = colors.fg, bg = colors.bg },
++  NormalNC = { fg = colors.fg, bg = colors.bg },
++  NormalFloat = { fg = colors.fg, bg = colors.bg_alt },
++  FloatBorder = { fg = colors.muted, bg = colors.bg_alt },
++  ColorColumn = { bg = colors.bg_alt },
++  Cursor = { fg = colors.bg, bg = colors.bright },
++  CursorLine = { bg = colors.bg_cursor },
++  CursorColumn = { bg = colors.bg_cursor },
++  LineNr = { fg = colors.muted },
++  CursorLineNr = { fg = colors.bright, bold = true },
++  SignColumn = { fg = colors.muted, bg = colors.bg },
++  EndOfBuffer = { fg = colors.bg },
++  Visual = { bg = colors.bg_visual },
++  Search = { fg = colors.bg, bg = colors.yellow },
++  IncSearch = { fg = colors.bg, bg = colors.orange },
++  MatchParen = { fg = colors.yellow, bold = true },
++  Pmenu = { fg = colors.fg, bg = colors.bg_alt },
++  PmenuSel = { fg = colors.bright, bg = colors.bg_visual, bold = true },
++  StatusLine = { fg = colors.fg, bg = colors.bg_cursor },
++  StatusLineNC = { fg = colors.muted, bg = colors.bg_alt },
++  WinSeparator = { fg = colors.bg_visual },
++  VertSplit = { fg = colors.bg_visual },
++  Folded = { fg = colors.muted, bg = colors.bg_alt },
++  Title = { fg = colors.blue, bold = true },
++  Directory = { fg = colors.blue },
++
++  Comment = { fg = colors.comment, italic = true },
++  Constant = { fg = colors.orange },
++  String = { fg = colors.blue },
++  Character = { fg = colors.blue },
++  Number = { fg = colors.orange },
++  Boolean = { fg = colors.orange, bold = true },
++  Float = { fg = colors.orange },
++  Identifier = { fg = colors.fg },
++  Function = { fg = colors.violet },
++  Statement = { fg = colors.pink },
++  Conditional = { fg = colors.pink },
++  Repeat = { fg = colors.pink },
++  Label = { fg = colors.blue },
++  Operator = { fg = colors.red },
++  Keyword = { fg = colors.pink },
++  Exception = { fg = colors.red },
++  PreProc = { fg = colors.pink },
++  Include = { fg = colors.pink },
++  Define = { fg = colors.pink },
++  Macro = { fg = colors.yellow },
++  Type = { fg = colors.yellow },
++  StorageClass = { fg = colors.red },
++  Structure = { fg = colors.yellow },
++  Typedef = { fg = colors.yellow },
++  Special = { fg = colors.cyan },
++  SpecialChar = { fg = colors.cyan },
++  Tag = { fg = colors.red },
++  Delimiter = { fg = colors.fg },
++  Underlined = { fg = colors.blue, underline = true },
++  Error = { fg = colors.red, bold = true },
++  Todo = { fg = colors.bg, bg = colors.yellow, bold = true },
++
++  DiagnosticError = { fg = colors.red },
++  DiagnosticWarn = { fg = colors.yellow },
++  DiagnosticInfo = { fg = colors.blue },
++  DiagnosticHint = { fg = colors.cyan },
++  DiffAdd = { fg = colors.green, bg = "#15251a" },
++  DiffChange = { fg = colors.blue, bg = "#18212d" },
++  DiffDelete = { fg = colors.red, bg = "#2a1719" },
++  DiffText = { fg = colors.bright, bg = "#24344a" },
++  GitSignsAdd = { fg = colors.green },
++  GitSignsChange = { fg = colors.blue },
++  GitSignsDelete = { fg = colors.red },
++
++  ["@comment"] = { link = "Comment" },
++  ["@string"] = { link = "String" },
++  ["@number"] = { link = "Number" },
++  ["@boolean"] = { link = "Boolean" },
++  ["@variable"] = { fg = colors.fg },
++  ["@variable.builtin"] = { fg = colors.cyan, italic = true },
++  ["@property"] = { fg = colors.orange },
++  ["@function"] = { fg = colors.violet },
++  ["@function.call"] = { fg = colors.violet },
++  ["@constructor"] = { fg = colors.yellow },
++  ["@keyword"] = { fg = colors.pink },
++  ["@keyword.function"] = { fg = colors.red },
++  ["@keyword.return"] = { fg = colors.pink },
++  ["@operator"] = { fg = colors.red },
++  ["@type"] = { fg = colors.yellow },
++  ["@tag"] = { fg = colors.red },
++  ["@tag.attribute"] = { fg = colors.orange },
++  ["@punctuation.bracket"] = { fg = colors.yellow },
++  ["@punctuation.delimiter"] = { fg = colors.fg },
++}
++
++for group, spec in pairs(groups) do
++  vim.api.nvim_set_hl(0, group, spec)
++end
++
++vim.g.terminal_color_0 = colors.bg_alt
++vim.g.terminal_color_1 = colors.red
++vim.g.terminal_color_2 = colors.green
++vim.g.terminal_color_3 = colors.yellow
++vim.g.terminal_color_4 = colors.blue
++vim.g.terminal_color_5 = colors.violet
++vim.g.terminal_color_6 = colors.cyan
++vim.g.terminal_color_7 = colors.fg
++vim.g.terminal_color_8 = colors.muted
++vim.g.terminal_color_9 = "#ff8585"
++vim.g.terminal_color_10 = "#a7e3b5"
++vim.g.terminal_color_11 = "#ffe45c"
++vim.g.terminal_color_12 = "#a5c2ff"
++vim.g.terminal_color_13 = "#dfa8ff"
++vim.g.terminal_color_14 = "#b2ebff"
++vim.g.terminal_color_15 = colors.bright
+
+diff --git a/Windows/Neovim/init.lua b/Windows/Neovim/init.lua
+new file mode 100644
+--- /dev/null
++++ b/Windows/Neovim/init.lua
+@@ -0,0 +1,382 @@
++-- Small, practical Neovim baseline.
++vim.g.mapleader = " "
++
++local opt = vim.opt
++
++-- Line numbers: absolute on the current line, relative everywhere else.
++opt.number = true
++opt.relativenumber = true
++
++-- Editing comfort.
++opt.mouse = "a"
++opt.clipboard = "unnamedplus"
++opt.cursorline = true
++opt.signcolumn = "yes"
++opt.scrolloff = 6
++opt.sidescrolloff = 6
++opt.wrap = false
++opt.confirm = true
++
++-- Indentation.
++opt.expandtab = true
++opt.tabstop = 4
++opt.shiftwidth = 4
++opt.softtabstop = 4
++opt.smartindent = true
++
++-- Searching.
++opt.ignorecase = true
++opt.smartcase = true
++
++-- Files, splits, and colours.
++opt.undofile = true
++opt.splitbelow = true
++opt.splitright = true
++opt.termguicolors = true
++opt.updatetime = 250
++opt.completeopt = { "menuone", "noselect", "popup" }
++
++-- Neutral VS Code-inspired theme.
++vim.cmd.colorscheme("vscode_black")
++
++-- IDE-style error and warning diagnostics.
++vim.diagnostic.config({
++  virtual_text = {
++    spacing = 2,
++    prefix = "●",
++    source = "if_many",
++  },
++  signs = {
++    text = {
++      [vim.diagnostic.severity.ERROR] = "󰅚",
++      [vim.diagnostic.severity.WARN] = "󰀪",
++      [vim.diagnostic.severity.INFO] = "󰋽",
++      [vim.diagnostic.severity.HINT] = "󰌶",
++    },
++  },
++  underline = true,
++  update_in_insert = false,
++  severity_sort = true,
++  float = {
++    border = "rounded",
++    source = true,
++  },
++})
++
++local function diagnostic_colours()
++  vim.api.nvim_set_hl(0, "DiagnosticError", { fg = "#ff6b6b" })
++  vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = "#ffd700" })
++  vim.api.nvim_set_hl(0, "DiagnosticInfo", { fg = "#82aaff" })
++  vim.api.nvim_set_hl(0, "DiagnosticHint", { fg = "#8bd49c" })
++  vim.api.nvim_set_hl(0, "DiagnosticUnderlineError", { undercurl = true, sp = "#ff6b6b" })
++  vim.api.nvim_set_hl(0, "DiagnosticUnderlineWarn", { undercurl = true, sp = "#ffd700" })
++end
++
++diagnostic_colours()
++
++-- Built-in LSP servers: no Neovim plugin manager required.
++local node = "C:/Program Files/nodejs/node.exe"
++local npm_modules = vim.fs.joinpath(vim.fn.expand("$APPDATA"), "npm", "node_modules")
++local nvim_tools = vim.fs.joinpath(vim.fn.expand("$LOCALAPPDATA"), "nvim-tools")
++
++local function npm_server(...)
++  return { node, vim.fs.joinpath(npm_modules, ...), "--stdio" }
++end
++
++vim.lsp.config("typescript", {
++  cmd = npm_server("typescript-language-server", "lib", "cli.mjs"),
++  init_options = {
++    tsserver = {
++      path = vim.fs.joinpath(npm_modules, "typescript", "lib", "tsserver.js"),
++    },
++  },
++  filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
++  root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
++})
++
++vim.lsp.config("pyright", {
++  cmd = npm_server("pyright", "langserver.index.js"),
++  filetypes = { "python" },
++  root_markers = { "pyrightconfig.json", "pyproject.toml", "requirements.txt", ".git" },
++})
++
++vim.lsp.config("json", {
++  cmd = npm_server("vscode-langservers-extracted", "bin", "vscode-json-language-server"),
++  filetypes = { "json", "jsonc" },
++  root_markers = { "package.json", ".git" },
++})
++
++vim.lsp.config("html", {
++  cmd = npm_server("vscode-langservers-extracted", "bin", "vscode-html-language-server"),
++  filetypes = { "html" },
++  root_markers = { "package.json", ".git" },
++})
++
++vim.lsp.config("css", {
++  cmd = npm_server("vscode-langservers-extracted", "bin", "vscode-css-language-server"),
++  filetypes = { "css", "scss", "less" },
++  root_markers = { "package.json", ".git" },
++})
++
++vim.lsp.config("clangd", {
++  cmd = {
++    vim.fs.joinpath(nvim_tools, "clangd", "clangd_22.1.0", "bin", "clangd.exe"),
++    "--background-index",
++    "--clang-tidy",
++    "--completion-style=detailed",
++  },
++  filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
++  root_dir = function(bufnr, on_dir)
++    local root = vim.fs.root(bufnr, {
++      ".clangd",
++      "compile_commands.json",
++      "compile_flags.txt",
++      ".git",
++    })
++    on_dir(root or vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr)))
++  end,
++})
++
++local java21 = vim.fs.joinpath(nvim_tools, "java21", "jdk-21.0.12+8", "bin", "java.exe")
++local jdtls_home = vim.fs.joinpath(nvim_tools, "jdtls")
++local jdtls_launcher = vim.fs.joinpath(
++  jdtls_home,
++  "plugins",
++  "org.eclipse.equinox.launcher_1.7.200.v20260619-2039.jar"
++)
++
++vim.lsp.config("jdtls", {
++  cmd = function(dispatchers, config)
++    local root = config.root_dir or vim.fn.getcwd()
++    local workspace = vim.fs.joinpath(
++      vim.fn.stdpath("data"),
++      "jdtls-workspaces",
++      vim.fn.sha256(root):sub(1, 16)
++    )
++    vim.fn.mkdir(workspace, "p")
++
++    return vim.lsp.rpc.start({
++      java21,
++      "-Declipse.application=org.eclipse.jdt.ls.core.id1",
++      "-Dosgi.bundles.defaultStartLevel=4",
++      "-Declipse.product=org.eclipse.jdt.ls.core.product",
++      "-Dlog.protocol=true",
++      "-Dlog.level=ALL",
++      "-Xmx1g",
++      "--add-modules=ALL-SYSTEM",
++      "--add-opens",
++      "java.base/java.util=ALL-UNNAMED",
++      "--add-opens",
++      "java.base/java.lang=ALL-UNNAMED",
++      "-jar",
++      jdtls_launcher,
++      "-configuration",
++      vim.fs.joinpath(jdtls_home, "config_win"),
++      "-data",
++      workspace,
++    }, dispatchers)
++  end,
++  filetypes = { "java" },
++  root_dir = function(bufnr, on_dir)
++    local root = vim.fs.root(bufnr, {
++      "mvnw",
++      "gradlew",
++      "pom.xml",
++      "build.gradle",
++      "build.gradle.kts",
++      "settings.gradle",
++      "settings.gradle.kts",
++      ".git",
++    })
++    on_dir(root or vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr)))
++  end,
++  settings = {
++    java = {
++      signatureHelp = { enabled = true },
++    },
++  },
++})
++
++vim.lsp.config("eslint", {
++  cmd = npm_server("vscode-langservers-extracted", "bin", "vscode-eslint-language-server"),
++  filetypes = {
++    "javascript",
++    "javascriptreact",
++    "typescript",
++    "typescriptreact",
++  },
++  root_markers = {
++    "eslint.config.js",
++    "eslint.config.mjs",
++    "eslint.config.cjs",
++    "eslint.config.ts",
++    ".eslintrc",
++    ".eslintrc.js",
++    ".eslintrc.json",
++    "package.json",
++    ".git",
++  },
++  settings = {
++    nodePath = npm_modules,
++    validate = "on",
++    useESLintClass = false,
++    run = "onType",
++    format = false,
++    quiet = false,
++    onIgnoredFiles = "off",
++    rulesCustomizations = {},
++    codeActionOnSave = { enable = false, mode = "all" },
++    codeAction = {
++      disableRuleComment = { enable = true, location = "separateLine" },
++      showDocumentation = { enable = true },
++    },
++    problems = { shortenToSingleLine = false },
++    experimental = {},
++    workingDirectory = { mode = "auto" },
++  },
++})
++
++-- Automatic LSP suggestions, including real import paths and filenames.
++vim.api.nvim_create_autocmd("LspAttach", {
++  callback = function(args)
++    local client = vim.lsp.get_client_by_id(args.data.client_id)
++    if client and client:supports_method("textDocument/completion") then
++      vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
++    end
++  end,
++})
++
++vim.keymap.set("i", "<C-Space>", function()
++  vim.lsp.completion.get()
++end, { desc = "Show code and path suggestions" })
++
++vim.lsp.enable({
++  "typescript",
++  "pyright",
++  "json",
++  "html",
++  "css",
++  "eslint",
++  "clangd",
++  "jdtls",
++})
++
++vim.keymap.set("n", "]d", function()
++  vim.diagnostic.jump({ count = 1, float = true })
++end, { desc = "Next diagnostic" })
++
++vim.keymap.set("n", "[d", function()
++  vim.diagnostic.jump({ count = -1, float = true })
++end, { desc = "Previous diagnostic" })
++
++vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, {
++  desc = "Show diagnostic details",
++})
++
++vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, {
++  desc = "List diagnostics",
++})
++
++-- Clear search highlighting with Escape.
++vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", {
++  desc = "Clear search highlighting",
++})
++
++-- Briefly highlight text after it is copied.
++vim.api.nvim_create_autocmd("TextYankPost", {
++  callback = function()
++    vim.highlight.on_yank({ timeout = 150 })
++  end,
++})
++
++-- Lightweight auto-pairs without a plugin.
++local bracket_pairs = {
++  ["("] = ")",
++  ["["] = "]",
++  ["{"] = "}",
++}
++
++local quote_pairs = {
++  ['"'] = true,
++  ["'"] = true,
++  ["`"] = true,
++}
++
++local function surrounding_characters()
++  local line = vim.api.nvim_get_current_line()
++  local column = vim.api.nvim_win_get_cursor(0)[2]
++  return line:sub(column, column), line:sub(column + 1, column + 1)
++end
++
++for opening, closing in pairs(bracket_pairs) do
++  vim.keymap.set("i", opening, opening .. closing .. "<Left>", {
++    desc = "Insert matching " .. closing,
++  })
++
++  vim.keymap.set("i", closing, function()
++    local _, next_character = surrounding_characters()
++    return next_character == closing and "<Right>" or closing
++  end, {
++    expr = true,
++    desc = "Step over or insert " .. closing,
++  })
++end
++
++for quote in pairs(quote_pairs) do
++  vim.keymap.set("i", quote, function()
++    local previous_character, next_character = surrounding_characters()
++
++    if next_character == quote then
++      return "<Right>"
++    end
++
++    if previous_character == "\\" or (quote == "'" and previous_character:match("[%w_]")) then
++      return quote
++    end
++
++    return quote .. quote .. "<Left>"
++  end, {
++    expr = true,
++    desc = "Insert matching quote",
++  })
++end
++
++vim.keymap.set("i", "<BS>", function()
++  local previous_character, next_character = surrounding_characters()
++  local is_empty_bracket = bracket_pairs[previous_character] == next_character
++  local is_empty_quote = quote_pairs[previous_character] and previous_character == next_character
++
++  return (is_empty_bracket or is_empty_quote) and "<BS><Del>" or "<BS>"
++end, {
++  expr = true,
++  desc = "Delete an empty pair together",
++})
++
++vim.keymap.set("i", "<CR>", function()
++  local previous_character, next_character = surrounding_characters()
++  return previous_character == "{" and next_character == "}" and "<CR><Esc>O" or "<CR>"
++end, {
++  expr = true,
++  desc = "Open an indented line inside braces",
++})
++
++-- Blend Neovim's background with Alacritty's background.
++local function transparent_background()
++  for _, group in ipairs({
++    "Normal",
++    "NormalNC",
++    "SignColumn",
++    "EndOfBuffer",
++  }) do
++    vim.api.nvim_set_hl(0, group, { bg = "none" })
++  end
++end
++
++transparent_background()
++
++vim.api.nvim_create_autocmd("ColorScheme", {
++  callback = function()
++    transparent_background()
++    diagnostic_colours()
++  end,
++})
+
+diff --git a/Windows/PowerShell/Microsoft.PowerShell_profile.ps1 b/Windows/PowerShell/Microsoft.PowerShell_profile.ps1
+new file mode 100644
+--- /dev/null
++++ b/Windows/PowerShell/Microsoft.PowerShell_profile.ps1
+@@ -0,0 +1,89 @@
++# Personal commands
++Set-Alias lvim 'C:\Users\kaura\.local\bin\lvim.ps1'
++
++# UTF-8 output for modern command-line tools.
++$OutputEncoding = [System.Text.UTF8Encoding]::new()
++[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
++
++# Yazi uses Git for Windows' file.exe for reliable MIME-type detection.
++$yaziFileOne = 'C:\Program Files\Git\usr\bin\file.exe'
++if (Test-Path -LiteralPath $yaziFileOne) {
++    $env:YAZI_FILE_ONE = $yaziFileOne
++}
++
++# bottom's MSI does not add its binary directory to PATH.
++$bottomBin = 'C:\Program Files\bottom\bin'
++if ((Test-Path -LiteralPath $bottomBin) -and $env:Path -notlike "*$bottomBin*") {
++    $env:Path = "$bottomBin;$env:Path"
++}
++
++# Better interactive history and completion.
++if (Get-Module -ListAvailable -Name PSReadLine) {
++    Set-PSReadLineOption -EditMode Windows
++
++    if ([Environment]::UserInteractive -and -not [Console]::IsOutputRedirected) {
++        Set-PSReadLineOption -PredictionSource History
++        Set-PSReadLineOption -PredictionViewStyle ListView
++    }
++
++    Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
++    Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
++
++    # Search command history with fzf.
++    Set-PSReadLineKeyHandler -Chord Ctrl+r -ScriptBlock {
++        $historyPath = (Get-PSReadLineOption).HistorySavePath
++        $selection = Get-Content -LiteralPath $historyPath -ErrorAction SilentlyContinue |
++            fzf --tac --no-sort --height 40% --layout reverse --border
++
++        if ($selection) {
++            [Microsoft.PowerShell.PSConsoleReadLine]::Insert($selection)
++        }
++    }
++}
++
++# VS Code-inspired fuzzy finder colours.
++$env:FZF_DEFAULT_OPTS = '--height=40% --layout=reverse --border=rounded --info=inline --prompt=❯  --pointer=◆ --marker=✓ --color=bg+:#202328,bg:#0f1113,spinner:#d4d4d4,hl:#ff6b6b,fg:#d4d4d4,header:#ff6b6b,info:#c792ea,pointer:#f0f0f0,marker:#ffd700,fg+:#f0f0f0,prompt:#c792ea,hl+:#e879d2'
++$env:FZF_DEFAULT_COMMAND = 'fd --type f --hidden --exclude .git'
++
++# Smarter directory navigation: `z project-name`.
++Invoke-Expression (& { (zoxide init powershell | Out-String) })
++
++# Unix-style file listings powered by eza.
++Set-Alias -Name ls -Value eza -Option AllScope -Force
++function ll { eza --long --icons=always --group-directories-first @args }
++function la { eza --long --all --icons=always --group-directories-first @args }
++function lt { eza --tree --level=2 --icons=always --group-directories-first @args }
++
++# Full-screen terminal applications.
++Set-Alias -Name lg -Value lazygit
++Set-Alias -Name top -Value btm
++Set-Alias -Name fetch -Value fastfetch
++
++# Start Yazi and switch PowerShell to its final directory when it exits.
++function y {
++    $cwdFile = Join-Path ([System.IO.Path]::GetTempPath()) ("yazi-cwd-{0}.txt" -f [guid]::NewGuid())
++
++    try {
++        yazi @args --cwd-file="$cwdFile"
++
++        if (Test-Path -LiteralPath $cwdFile) {
++            $newDirectory = Get-Content -LiteralPath $cwdFile -Raw
++            if ($newDirectory -and $newDirectory -ne $PWD.Path) {
++                Set-Location -LiteralPath $newDirectory
++            }
++        }
++    }
++    finally {
++        Remove-Item -LiteralPath $cwdFile -Force -ErrorAction SilentlyContinue
++    }
++}
++
++# Pick a file and open it in Neovim.
++function ff {
++    $selection = fzf --preview 'bat --color=always --style=numbers --line-range=:500 {}'
++    if ($selection) {
++        nvim $selection
++    }
++}
++
++Invoke-Expression (&starship init powershell)
+
+diff --git a/Windows/Starship/starship.toml b/Windows/Starship/starship.toml
+new file mode 100644
+--- /dev/null
++++ b/Windows/Starship/starship.toml
+@@ -0,0 +1,81 @@
++add_newline = true
++palette = "vscode_black"
++
++format = "$directory$git_branch$git_status$fill$cmd_duration$line_break$character"
++right_format = "$status$time"
++
++[directory]
++style = "bold lavender"
++format = "[󰉋  $path]($style) "
++truncation_length = 4
++truncate_to_repo = false
++read_only = " 󰌾"
++
++[git_branch]
++symbol = " "
++style = "bold mauve"
++format = "on [$symbol$branch]($style) "
++
++[git_status]
++style = "bold red"
++format = "([$all_status$ahead_behind]($style) )"
++
++[cmd_duration]
++min_time = 1500
++style = "yellow"
++format = "[󱎫 $duration]($style) "
++
++[status]
++disabled = false
++style = "bold red"
++format = "[$symbol$status]($style) "
++
++[time]
++disabled = false
++time_format = "%H:%M"
++style = "overlay1"
++format = "[ $time]($style)"
++
++[character]
++success_symbol = "[❯](bold green)"
++error_symbol = "[❯](bold red)"
++vimcmd_symbol = "[❮](bold mauve)"
++
++[fill]
++symbol = " "
++
++[palettes.vscode_black]
++lavender = "#82aaff"
++mauve = "#c792ea"
++red = "#ff6b6b"
++yellow = "#ffd700"
++green = "#8bd49c"
++overlay1 = "#8b8f96"
++
++[palettes.catppuccin_mocha]
++rosewater = "#f5e0dc"
++flamingo = "#f2cdcd"
++pink = "#f5c2e7"
++mauve = "#cba6f7"
++red = "#f38ba8"
++maroon = "#eba0ac"
++peach = "#fab387"
++yellow = "#f9e2af"
++green = "#a6e3a1"
++teal = "#94e2d5"
++sky = "#89dceb"
++sapphire = "#74c7ec"
++blue = "#89b4fa"
++lavender = "#b4befe"
++text = "#cdd6f4"
++subtext1 = "#bac2de"
++subtext0 = "#a6adc8"
++overlay2 = "#9399b2"
++overlay1 = "#7f849c"
++overlay0 = "#6c7086"
++surface2 = "#585b70"
++surface1 = "#45475a"
++surface0 = "#313244"
++base = "#1e1e2e"
++mantle = "#181825"
++crust = "#11111b"
+
+diff --git a/Windows/Windows Terminal/settings.json b/Windows/Windows Terminal/settings.json
+new file mode 100644
+--- /dev/null
++++ b/Windows/Windows Terminal/settings.json
+@@ -0,0 +1,171 @@
++{
++  "$help": "https://aka.ms/terminal-documentation",
++  "$schema": "https://aka.ms/terminal-profiles-schema",
++  "actions": [],
++  "alwaysShowTabs": true,
++  "copyFormatting": "none",
++  "copyOnSelect": false,
++  "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
++  "keybindings": [
++    {
++      "id": "Terminal.CopyToClipboard",
++      "keys": "ctrl+c"
++    },
++    {
++      "id": "Terminal.PasteFromClipboard",
++      "keys": "ctrl+v"
++    },
++    {
++      "id": "Terminal.DuplicatePaneAuto",
++      "keys": "alt+shift+d"
++    }
++  ],
++  "launchMode": "maximized",
++  "newTabMenu": [
++    {
++      "type": "remainingProfiles"
++    }
++  ],
++  "profiles": {
++    "defaults": {
++      "adjustIndistinguishableColors": "indexed",
++      "antialiasingMode": "cleartype",
++      "backgroundImage": "C:\\Users\\kaura\\AppData\\Local\\Packages\\Microsoft.WindowsTerminal_8wekyb3d8bbwe\\LocalState\\wallpapers\\final-terminal-clean.png",
++      "backgroundImageAlignment": "center",
++      "backgroundImageOpacity": 0.22,
++      "backgroundImageStretchMode": "uniformToFill",
++      "colorScheme": "Neon Noir",
++      "cursorShape": "bar",
++      "font": {
++        "face": "JetBrainsMono NF",
++        "size": 11.0,
++        "weight": "normal"
++      },
++      "opacity": 82,
++      "padding": "14, 12, 14, 12",
++      "scrollbarState": "hidden",
++      "useAcrylic": true,
++      "unfocusedAppearance": {
++        "backgroundImageOpacity": 0.12,
++        "opacity": 90,
++        "useAcrylic": true
++      }
++    },
++    "list": [
++      {
++        "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
++        "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
++        "hidden": false,
++        "name": "Windows PowerShell"
++      },
++      {
++        "commandline": "%SystemRoot%\\System32\\cmd.exe",
++        "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
++        "hidden": false,
++        "name": "Command Prompt"
++      },
++      {
++        "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
++        "hidden": false,
++        "name": "Azure Cloud Shell",
++        "source": "Windows.Terminal.Azure"
++      },
++      {
++        "guid": "{80a2a079-df24-5f81-9cb6-2612171a897e}",
++        "hidden": false,
++        "name": "Ubuntu",
++        "source": "Microsoft.WSL"
++      },
++      {
++        "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
++        "hidden": false,
++        "name": "PowerShell",
++        "source": "Windows.Terminal.PowershellCore"
++      }
++    ]
++  },
++  "schemes": [
++    {
++      "name": "Neon Noir",
++      "background": "#09070D",
++      "foreground": "#EEEAF2",
++      "cursorColor": "#73F7FF",
++      "selectionBackground": "#4A2D5F",
++      "black": "#15101C",
++      "red": "#FF477E",
++      "green": "#7EF0B8",
++      "yellow": "#FFD866",
++      "blue": "#64B5FF",
++      "purple": "#D66BFF",
++      "cyan": "#4DEBFF",
++      "white": "#D8D2DF",
++      "brightBlack": "#6E6577",
++      "brightRed": "#FF77A1",
++      "brightGreen": "#A1F7CD",
++      "brightYellow": "#FFE596",
++      "brightBlue": "#92CBFF",
++      "brightPurple": "#E59AFF",
++      "brightCyan": "#8AF3FF",
++      "brightWhite": "#FFFFFF"
++    },
++    {
++      "name": "Catppuccin Mocha",
++      "background": "#1E1E2E",
++      "foreground": "#CDD6F4",
++      "cursorColor": "#F5E0DC",
++      "selectionBackground": "#585B70",
++      "black": "#45475A",
++      "red": "#F38BA8",
++      "green": "#A6E3A1",
++      "yellow": "#F9E2AF",
++      "blue": "#89B4FA",
++      "purple": "#F5C2E7",
++      "cyan": "#94E2D5",
++      "white": "#BAC2DE",
++      "brightBlack": "#585B70",
++      "brightRed": "#F38BA8",
++      "brightGreen": "#A6E3A1",
++      "brightYellow": "#F9E2AF",
++      "brightBlue": "#89B4FA",
++      "brightPurple": "#F5C2E7",
++      "brightCyan": "#94E2D5",
++      "brightWhite": "#A6ADC8"
++    }
++  ],
++  "showTabsInTitlebar": true,
++  "tabWidthMode": "compact",
++  "theme": "Neon Noir",
++  "themes": [
++    {
++      "name": "Neon Noir",
++      "tab": {
++        "background": "terminalBackground",
++        "unfocusedBackground": "#160C20B8"
++      },
++      "tabRow": {
++        "background": "#08050B99",
++        "unfocusedBackground": "#08050BC7"
++      },
++      "window": {
++        "applicationTheme": "dark",
++        "useMica": true
++      }
++    },
++    {
++      "name": "Catppuccin Mocha",
++      "tab": {
++        "background": "terminalBackground",
++        "unfocusedBackground": "#181825CC"
++      },
++      "tabRow": {
++        "background": "#00000000",
++        "unfocusedBackground": "#11111BDD"
++      },
++      "window": {
++        "applicationTheme": "dark",
++        "useMica": true
++      }
++    }
++  ],
++  "useAcrylicInTabRow": true
++}
+
+diff --git a/Windows/Windows Terminal/wallpapers/cyberpunk-avatar.jpg b/Windows/Windows Terminal/wallpapers/cyberpunk-avatar.jpg
+new file mode 100644
+--- /dev/null
++++ b/Windows/Windows Terminal/wallpapers/cyberpunk-avatar.jpg
+Binary file added: b/Windows/Windows Terminal/wallpapers/cyberpunk-avatar.jpg
+
+diff --git a/Windows/Windows Terminal/wallpapers/cyberpunk-back.png b/Windows/Windows Terminal/wallpapers/cyberpunk-back.png
+new file mode 100644
+--- /dev/null
++++ b/Windows/Windows Terminal/wallpapers/cyberpunk-back.png
+Binary file added: b/Windows/Windows Terminal/wallpapers/cyberpunk-back.png
+
+diff --git a/Windows/Windows Terminal/wallpapers/cyberpunk-front.png b/Windows/Windows Terminal/wallpapers/cyberpunk-front.png
+new file mode 100644
+--- /dev/null
++++ b/Windows/Windows Terminal/wallpapers/cyberpunk-front.png
+Binary file added: b/Windows/Windows Terminal/wallpapers/cyberpunk-front.png
+
+diff --git a/Windows/Windows Terminal/wallpapers/final-terminal-clean.png b/Windows/Windows Terminal/wallpapers/final-terminal-clean.png
+new file mode 100644
+--- /dev/null
++++ b/Windows/Windows Terminal/wallpapers/final-terminal-clean.png
+Binary file added: b/Windows/Windows Terminal/wallpapers/final-terminal-clean.png
+
+diff --git a/Windows/Windows Terminal/wallpapers/gemini-neon-warrior.png b/Windows/Windows Terminal/wallpapers/gemini-neon-warrior.png
+new file mode 100644
+--- /dev/null
++++ b/Windows/Windows Terminal/wallpapers/gemini-neon-warrior.png
+Binary file added: b/Windows/Windows Terminal/wallpapers/gemini-neon-warrior.png
+
+diff --git a/Windows/Windows Terminal/wallpapers/wallpaper-credits.txt b/Windows/Windows Terminal/wallpapers/wallpaper-credits.txt
+new file mode 100644
+--- /dev/null
++++ b/Windows/Windows Terminal/wallpapers/wallpaper-credits.txt
+@@ -0,0 +1,17 @@
++WINDOWS TERMINAL WALLPAPER SOURCES
++==================================
++
++Source repository:
++https://github.com/q/K-DE-Cyberpunk-Neon
++
++Repository wallpaper credit:
++"Highway 4k" by AxiomDesign
++
++Files stored locally:
++- final-terminal-clean.png (active Windows Terminal background, supplied by the user; copied losslessly)
++- gemini-neon-warrior.png (previous user-supplied alternative)
++- cyberpunk-back.png  (alternative)
++- cyberpunk-front.png (alternative)
++- cyberpunk-avatar.jpg (alternative)
++
++The repository states that its contents are GPL-licensed except for one MIT-licensed script.
+
+diff --git a/Windows/Yazi/keymap.toml b/Windows/Yazi/keymap.toml
+new file mode 100644
+--- /dev/null
++++ b/Windows/Yazi/keymap.toml
+@@ -0,0 +1,4 @@
++[[mgr.prepend_keymap]]
++on = "E"
++run = 'shell --orphan -- alacritty.exe -e nvim.exe %h'
++desc = "Open in Neovim - new Alacritty window"
+
+diff --git a/WSL/Ubuntu/home/ubuntu/.bashrc b/WSL/Ubuntu/home/ubuntu/.bashrc
+new file mode 100644
+--- /dev/null
++++ b/WSL/Ubuntu/home/ubuntu/.bashrc
+@@ -0,0 +1,183 @@
++# ~/.bashrc: executed by bash(1) for non-login shells.
++# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
++# for examples
++
++# If not running interactively, don't do anything
++case $- in
++    *i*) ;;
++      *) return;;
++esac
++
++# don't put duplicate lines or lines starting with space in the history.
++# See bash(1) for more options
++HISTCONTROL=ignoreboth
++
++# append to the history file, don't overwrite it
++shopt -s histappend
++
++# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
++HISTSIZE=1000
++HISTFILESIZE=2000
++
++# check the window size after each command and, if necessary,
++# update the values of LINES and COLUMNS.
++shopt -s checkwinsize
++
++# If set, the pattern "**" used in a pathname expansion context will
++# match all files and zero or more directories and subdirectories.
++#shopt -s globstar
++
++# make less more friendly for non-text input files, see lesspipe(1)
++[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
++
++# set variable identifying the chroot you work in (used in the prompt below)
++if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
++    debian_chroot=$(cat /etc/debian_chroot)
++fi
++
++# set a fancy prompt (non-color, unless we know we "want" color)
++case "$TERM" in
++    xterm-color|*-256color) color_prompt=yes;;
++esac
++
++# uncomment for a colored prompt, if the terminal has the capability; turned
++# off by default to not distract the user: the focus in a terminal window
++# should be on the output of commands, not on the prompt
++#force_color_prompt=yes
++
++if [ -n "$force_color_prompt" ]; then
++    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
++	# We have color support; assume it's compliant with Ecma-48
++	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
++	# a case would tend to support setf rather than setaf.)
++	color_prompt=yes
++    else
++	color_prompt=
++    fi
++fi
++
++if [ "$color_prompt" = yes ]; then
++    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
++else
++    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
++fi
++unset color_prompt force_color_prompt
++
++# If this is an xterm set the title to user@host:dir
++case "$TERM" in
++xterm*|rxvt*)
++    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
++    ;;
++*)
++    ;;
++esac
++
++# enable color support of ls and also add handy aliases
++if [ -x /usr/bin/dircolors ]; then
++    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
++    alias ls='ls --color=auto'
++    #alias dir='dir --color=auto'
++    #alias vdir='vdir --color=auto'
++
++    alias grep='grep --color=auto'
++    alias fgrep='fgrep --color=auto'
++    alias egrep='egrep --color=auto'
++fi
++
++# colored GCC warnings and errors
++#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
++
++# some more ls aliases
++alias ll='ls -alF'
++alias la='ls -A'
++alias l='ls -CF'
++
++# Add an "alert" alias for long running commands.  Use like so:
++#   sleep 10; alert
++alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
++
++# Alias definitions.
++# You may want to put all your additions into a separate file like
++# ~/.bash_aliases, instead of adding them here directly.
++# See /usr/share/doc/bash-doc/examples in the bash-doc package.
++
++if [ -f ~/.bash_aliases ]; then
++    . ~/.bash_aliases
++fi
++
++# enable programmable completion features (you don't need to enable
++# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
++# sources /etc/bash.bashrc).
++if ! shopt -oq posix; then
++  if [ -f /usr/share/bash-completion/bash_completion ]; then
++    . /usr/share/bash-completion/bash_completion
++  elif [ -f /etc/bash_completion ]; then
++    . /etc/bash_completion
++  fi
++fi
++
++# Generated for envman. Do not edit.
++[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
++
++eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
++
++# >>> Codex lazy NVM >>>
++# Keep Bash startup fast; initialize NVM only when a Node command is first used.
++export NVM_DIR="$HOME/.nvm"
++
++__codex_load_nvm() {
++    unset -f nvm node npm npx
++
++    if [ -s "$NVM_DIR/nvm.sh" ]; then
++        source "$NVM_DIR/nvm.sh"
++        [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
++    else
++        printf 'NVM was not found at %s\n' "$NVM_DIR" >&2
++        return 127
++    fi
++}
++
++nvm()  { __codex_load_nvm && nvm "$@"; }
++node() { __codex_load_nvm && node "$@"; }
++npm()  { __codex_load_nvm && npm "$@"; }
++npx()  { __codex_load_nvm && npx "$@"; }
++# <<< Codex lazy NVM <<<
++
++# >>> Codex WSL enhancements >>>
++# Small, practical Linux CLI setup. Remove this marked block to disable it.
++export PATH="$HOME/.local/bin:$PATH"
++
++# VS Code-inspired fuzzy finder appearance.
++export FZF_DEFAULT_OPTS='--height=40% --layout=reverse --border=rounded --info=inline --prompt=❯  --pointer=◆ --marker=✓ --color=bg+:#202328,bg:#0f1113,spinner:#d4d4d4,hl:#ff6b6b,fg:#d4d4d4,header:#ff6b6b,info:#c792ea,pointer:#f0f0f0,marker:#ffd700,fg+:#f0f0f0,prompt:#c792ea,hl+:#e879d2'
++export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
++
++# fzf: Ctrl+R history, Ctrl+T files, and Alt+C directories.
++[ -r /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
++[ -r /usr/share/doc/fzf/examples/completion.bash ] && source /usr/share/doc/fzf/examples/completion.bash
++
++# Inline history suggestions and live syntax highlighting for Bash.
++if [ -r "$HOME/.local/share/blesh/ble.sh" ]; then
++    source "$HOME/.local/share/blesh/ble.sh" --noattach
++fi
++
++# Smart directory navigation: z project-name.
++command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init bash)"
++
++# Modern listings and useful short Git commands.
++alias ls='eza --icons=auto --group-directories-first'
++alias ll='eza --long --all --icons=auto --git --group-directories-first'
++alias la='eza --all --icons=auto --group-directories-first'
++alias lt='eza --tree --level=2 --icons=auto --group-directories-first'
++alias top='btop'
++alias lg='lazygit'
++alias gs='git status --short --branch'
++alias gl='git log --oneline --graph --decorate --all -20'
++alias gd='git diff'
++alias gds='git diff --staged'
++
++# Compact Ubuntu/Git prompt. It only shows Git details inside repositories.
++command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"
++
++# Attach ble.sh only after the prompt and other shell integrations are ready.
++declare -F ble-attach >/dev/null 2>&1 && ble-attach
++# <<< Codex WSL enhancements <<<
+
+diff --git a/WSL/Ubuntu/home/ubuntu/.config/starship.toml b/WSL/Ubuntu/home/ubuntu/.config/starship.toml
+new file mode 100644
+--- /dev/null
++++ b/WSL/Ubuntu/home/ubuntu/.config/starship.toml
+@@ -0,0 +1,62 @@
++add_newline = true
++palette = "vscode_black"
++
++format = "$os$directory$git_branch$git_status$fill$cmd_duration$line_break$character"
++right_format = "$status$time"
++
++[os]
++disabled = false
++style = "bold mauve"
++format = "[$symbol]($style)"
++
++[os.symbols]
++Ubuntu = "  "
++Linux = "  "
++
++[directory]
++style = "bold blue"
++format = "[󰉋  $path]($style) "
++truncation_length = 4
++truncate_to_repo = false
++read_only = " 󰌾"
++
++[git_branch]
++symbol = " "
++style = "bold mauve"
++format = "on [$symbol$branch]($style) "
++
++[git_status]
++style = "bold red"
++format = "([$all_status$ahead_behind]($style) )"
++
++[cmd_duration]
++min_time = 1500
++style = "yellow"
++format = "[󱎫 $duration]($style) "
++
++[status]
++disabled = false
++style = "bold red"
++format = "[$symbol$status]($style) "
++
++[time]
++disabled = false
++time_format = "%H:%M"
++style = "dim"
++format = "[ $time]($style)"
++
++[character]
++success_symbol = "[❯](bold green)"
++error_symbol = "[❯](bold red)"
++vimcmd_symbol = "[❮](bold mauve)"
++
++[fill]
++symbol = " "
++
++[palettes.vscode_black]
++blue = "#82aaff"
++mauve = "#c792ea"
++red = "#ff6b6b"
++yellow = "#ffd700"
++green = "#8bd49c"
++dim = "#8b8f96"
+

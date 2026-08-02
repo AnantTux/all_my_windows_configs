@@ -1,0 +1,4 @@
+[[mgr.prepend_keymap]]
+on = "E"
+run = 'shell --orphan -- alacritty.exe -e nvim.exe %h'
+desc = "Open in Neovim - new Alacritty window"

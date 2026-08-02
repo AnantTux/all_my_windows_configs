@@ -1,0 +1,17 @@
+WINDOWS TERMINAL WALLPAPER SOURCES
+==================================
+
+Source repository:
+https://github.com/q/K-DE-Cyberpunk-Neon
+
+Repository wallpaper credit:
+"Highway 4k" by AxiomDesign
+
+Files stored locally:
+- final-terminal-clean.png (active Windows Terminal background, supplied by the user; copied losslessly)
+- gemini-neon-warrior.png (previous user-supplied alternative)
+- cyberpunk-back.png  (alternative)
+- cyberpunk-front.png (alternative)
+- cyberpunk-avatar.jpg (alternative)
+
+The repository states that its contents are GPL-licensed except for one MIT-licensed script.

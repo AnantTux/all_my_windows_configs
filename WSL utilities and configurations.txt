@@ -1,0 +1,184 @@
+WSL / UBUNTU UTILITIES AND CONFIGURATIONS
+=========================================
+
+System:
+- Distribution: Ubuntu 24.04.4 LTS on WSL 2
+- Linux user: ubuntu
+- Home folder: /home/ubuntu
+- Default shell: Bash
+
+
+MAIN CONFIGURATION PATHS
+------------------------
+
+Bash startup file:
+\\wsl.localhost\Ubuntu\home\ubuntu\.bashrc
+
+Starship prompt:
+\\wsl.localhost\Ubuntu\home\ubuntu\.config\starship.toml
+
+Envman loader and data:
+\\wsl.localhost\Ubuntu\home\ubuntu\.config\envman
+
+ble.sh command suggestions:
+\\wsl.localhost\Ubuntu\home\ubuntu\.local\share\blesh\ble.sh
+
+Lazygit executable:
+\\wsl.localhost\Ubuntu\home\ubuntu\.local\bin\lazygit
+
+Latest pre-change backup:
+\\wsl.localhost\Ubuntu\home\ubuntu\.config\codex-terminal-backups\20260801-060133
+
+Initial WSL-enhancement backup:
+\\wsl.localhost\Ubuntu\home\ubuntu\.config\codex-terminal-backups\20260801-052353
+
+
+TOOLS THAT WERE ALREADY PRESENT
+-------------------------------
+
+Linuxbrew / Homebrew 4.5.4
+- Location: /home/linuxbrew/.linuxbrew
+- Linux package manager independent of Ubuntu's apt.
+- Installed formulas: binutils 2.44, fastfetch 2.44.0, GCC 15.1.0,
+  GMP 6.3.0, ISL 0.27, libmpc 1.3.1, LZ4 1.10.0, MPFR 4.2.2,
+  XZ 5.8.1, zlib 1.3.1 and zstd 1.5.7.
+- brew list                 Show installed Homebrew packages.
+- brew search NAME          Search for a package.
+- brew install NAME         Install a package.
+- brew update               Refresh Homebrew.
+- brew upgrade              Upgrade installed formulas.
+- brew uninstall NAME       Remove a formula.
+
+NVM / Node.js
+- NVM version: 0.40.1
+- Active/default Node.js: 22.23.1
+- npm version: 10.9.8
+- nvm list                  Show installed Node versions.
+- nvm install --lts         Install the current LTS release.
+- nvm use 22                Switch to Node 22.
+- nvm alias default 22      Make Node 22 the default.
+- node --version            Show active Node version.
+- npm --version             Show npm version.
+- Performance: NVM is lazy-loaded. It does not delay shell startup; the first
+  `node`, `npm`, `npx` or `nvm` command initializes it automatically.
+- Verified startup improvement: approximately 1.02 seconds before optimization
+  and 0.27 seconds afterwards.
+
+Envman
+- Loads custom environment variables, PATH entries, aliases and functions.
+- Current PATH additions:
+  $HOME/.local/opt/go/bin
+  $HOME/go/bin
+  $HOME/.local/bin
+- Generated loader: ~/.config/envman/load.sh
+- PATH definitions: ~/.config/envman/PATH.env
+- Other available files: ENV.env, alias.env and function.sh.
+
+Existing development tools
+- Git 2.43.0: source control.
+- GitHub CLI 2.45.0: GitHub operations through the `gh` command.
+- Python 3.12.3 and pip 24.0.
+- Ubuntu GCC/G++ 13.3.0 and GNU Make 4.3.
+- Homebrew GCC 15.1.0 is also installed separately.
+- OpenJDK and javac 21.0.11.
+- Vim 9.1.
+- tmux 3.4 terminal multiplexer.
+- Fastfetch 2.44.0 through Homebrew.
+- Windows VS Code command is available inside WSL as `code`.
+
+
+TOOLS AND CHANGES ADDED BY CODEX
+--------------------------------
+
+ble.sh 0.3.4
+- Inline suggestions from Bash history.
+- Live command syntax highlighting.
+- Use Right Arrow to accept a visible suggestion.
+
+Starship 1.23.0 configuration
+- Compact VS Code-black themed Ubuntu prompt.
+- Shows directory, Git branch/status, slow-command duration, failures and time.
+- Git information only appears while inside a Git repository.
+
+fzf 0.44.1
+- Ctrl+R: fuzzy command-history search.
+- Ctrl+T: fuzzy file selection into the command line.
+- Alt+C: fuzzy folder selection and navigation.
+
+zoxide 0.9.3
+- Learns frequently visited directories.
+- z PROJECT               Jump to a matching remembered directory.
+- zi                      Select a directory interactively.
+
+eza 0.18.2
+- Modern replacement for `ls`.
+- ls                      Normal icon-aware listing.
+- ll                      Detailed listing, hidden files and Git status.
+- la                      Listing including hidden files.
+- lt                      Two-level directory tree.
+
+Git and Lazygit
+- lg                      Open the Lazygit full-screen Git interface.
+- gs                      Short Git status and current branch.
+- gl                      Last 20 commits as a decorated graph.
+- gd                      Show unstaged changes.
+- gds                     Show staged changes.
+- Lazygit version: 0.63.1, installed from its official verified release.
+
+Search and file viewing
+- fd NAME                 Quickly find files by name.
+- rg TEXT                 Search file contents recursively.
+- bat FILE                View a file with syntax highlighting and line numbers.
+
+System monitoring
+- top                     Opens btop instead of the old top interface.
+- btop                    Opens the same modern system monitor directly.
+
+
+EVERYDAY EXAMPLE
+----------------
+
+cd ~/my-project
+gs                         Check branch and changed files.
+ll                         Inspect files and their Git state.
+lg                         Stage, commit, pull and push interactively.
+rg "search text"          Search the project contents.
+z project-name             Jump back to a remembered project.
+
+
+PACKAGE MANAGEMENT
+------------------
+
+Ubuntu apt packages:
+sudo apt update
+sudo apt upgrade
+sudo apt install PACKAGE
+sudo apt remove PACKAGE
+
+Linuxbrew packages:
+brew update
+brew upgrade
+brew install PACKAGE
+
+Node packages:
+npm install PACKAGE
+npm install -g PACKAGE
+npm update
+
+
+CURRENTLY NOT INSTALLED INSIDE WSL
+----------------------------------
+
+- CMake
+- Go executable (Envman has reserved Go PATH locations, but Go is not installed)
+- Rust and Cargo
+- Docker CLI
+- Neovim inside WSL (Windows Neovim remains installed separately)
+
+
+RELOAD AFTER EDITING CONFIGURATION
+----------------------------------
+
+source ~/.bashrc
+
+Opening a fresh Ubuntu/WSL tab is usually cleaner after major changes.

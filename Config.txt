@@ -1,0 +1,147 @@
+You currently have two terminal apps, five Windows Terminal profiles, two PowerShell configurations, Starship, and a lightweight Neovim setup.
+
+## Windows Terminal
+
+All five profiles inherit these appearance settings:
+
+| Setting | Current value |
+|---|---|
+| Font | JetBrainsMono NF, 11 pt |
+| Theme | Neon Noir |
+| Background | `final-terminal-clean.png` |
+| Image opacity | 22% focused, 12% unfocused |
+| Terminal opacity | 82% focused, 90% unfocused |
+| Blur | Acrylic enabled |
+| Window chrome | Dark Mica |
+| Tab bar | Translucent acrylic, compact tabs |
+| Cursor | Bar |
+| Padding | 14 left/right, 12 top/bottom |
+| Scrollbar | Hidden |
+| Startup | Maximized |
+| Image scaling | Uniform-to-fill, centred |
+| Text rendering | ClearType |
+
+The image is stored in its original quality without recompression.
+
+### Available profiles
+
+- **Windows PowerShell** — your current default
+- **PowerShell 7**
+- **Command Prompt**
+- **Ubuntu via WSL**
+- **Azure Cloud Shell**
+
+They share the same font, wallpaper, colours, opacity, padding, and blur. Their command-line features differ depending on the shell.
+
+Shortcuts:
+
+- `Ctrl+C` — copy
+- `Ctrl+V` — paste
+- `Alt+Shift+D` — duplicate/split the current pane automatically
+
+Config: [settings.json](<C:/Users/kaura/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json>)
+
+## Alacritty
+
+| Setting | Current value |
+|---|---|
+| Shell | PowerShell 7 |
+| Font | JetBrainsMono NF, 11.5 pt |
+| Font styles | Regular, bold, italic and bold italic |
+| Theme | VS Code-inspired neutral black |
+| Background | `#0f1113` |
+| Opacity | 96% |
+| Startup | Maximized |
+| Decorations | None—borderless |
+| Padding | 14 × 12, dynamically balanced |
+| Cursor | Blinking beam |
+| Scroll history | 50,000 lines |
+| Mouse | Hidden while typing |
+| Selection | Automatically copied |
+| Live reload | Enabled |
+
+Alacritty does not have native Windows acrylic blur like Windows Terminal. Its transparency is simpler and intentionally more restrained.
+
+Shortcuts:
+
+- `Ctrl+Shift+C` / `Ctrl+Shift+V` — copy/paste
+- `Ctrl+Shift+N` — new window
+- `F11` — fullscreen
+- `Ctrl+=` / `Ctrl+-` — change font size
+- `Ctrl+0` — reset font size
+
+Config: [alacritty.toml](<C:/Users/kaura/AppData/Roaming/alacritty/alacritty.toml>)
+
+## PowerShell 7
+
+PowerShell 7 is used automatically by Alacritty and when you select the **PowerShell** profile in Windows Terminal.
+
+Features currently active:
+
+- UTF-8 support for icons and modern tools
+- Starship prompt
+- Command history suggestions displayed as a list
+- Up/down arrows search matching history
+- `Ctrl+R` opens fuzzy command-history search
+- `z project` jumps intelligently to frequently visited folders
+- `ls` uses modern coloured `eza` listings
+- `ll` gives detailed listings
+- `la` includes hidden files
+- `lt` displays a two-level file tree
+- `lg` opens Lazygit
+- `top` opens Bottom system monitor
+- `fetch` displays Fastfetch system information
+- `y` opens Yazi and remembers its final directory
+- `ff` fuzzy-finds a file, previews it with Bat, then opens it in Neovim
+- `lvim` launches your LunarVim command
+
+Config: [PowerShell 7 profile](<C:/Users/kaura/OneDrive/Documents/PowerShell/Microsoft.PowerShell_profile.ps1>)
+
+## Classic Windows PowerShell
+
+This is currently the default Windows Terminal profile. It has:
+
+- Starship prompt
+- Neovim added to its executable path
+
+It does **not** currently load the richer `eza`, `fzf`, `zoxide`, Yazi, Lazygit, and history configuration listed above.
+
+Config: [Windows PowerShell profile](<C:/Users/kaura/OneDrive/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1>)
+
+## Starship prompt
+
+Your prompt uses the same VS Code-inspired black palette as Alacritty and Neovim.
+
+It displays:
+
+- Current directory
+- Git branch and repository status
+- Command duration for commands over 1.5 seconds
+- Previous command’s error status
+- Current time
+- Green or red prompt indicator
+- Nerd Font folder, Git, lock, timer, and clock icons
+
+Config: [starship.toml](<C:/Users/kaura/.config/starship.toml>)
+
+## Neovim terminal integration
+
+Your lightweight Neovim configuration includes:
+
+- Absolute current line number with relative surrounding numbers
+- System clipboard integration
+- Mouse support
+- Cursor-line highlighting
+- Persistent undo
+- Smart case-sensitive searching
+- Four-space indentation
+- Splits opening below and to the right
+- Search highlighting cleared with `Esc`
+- Brief highlight after copying text
+- Transparent editor background that blends with Alacritty
+- VS Code-inspired neutral black colour scheme
+- No system-wide Caps Lock remapping
+
+Config: [init.lua](<C:/Users/kaura/AppData/Local/nvim/init.lua>)
+
+The main thing to remember is: **Alacritty gives you PowerShell 7 and all enhanced commands automatically, but Windows Terminal currently opens classic Windows PowerShell by default.**

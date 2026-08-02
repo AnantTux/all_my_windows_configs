@@ -1,0 +1,122 @@
+[general]
+live_config_reload = true
+working_directory = "C:\\Users\\kaura"
+
+[env]
+TERM = "xterm-256color"
+
+[window]
+startup_mode = "Maximized"
+decorations = "None"
+padding = { x = 14, y = 12 }
+dynamic_padding = true
+opacity = 0.96
+title = "Terminal"
+dynamic_title = true
+
+[scrolling]
+history = 50000
+multiplier = 3
+
+[font]
+normal = { family = "JetBrainsMono NF", style = "Regular" }
+bold = { family = "JetBrainsMono NF", style = "Bold" }
+italic = { family = "JetBrainsMono NF", style = "Italic" }
+bold_italic = { family = "JetBrainsMono NF", style = "Bold Italic" }
+size = 11.5
+offset = { x = 0, y = 1 }
+
+[terminal.shell]
+program = "pwsh.exe"
+args = ["-NoLogo", "-NoExit"]
+
+[cursor]
+style = { shape = "Beam", blinking = "On" }
+blink_interval = 550
+blink_timeout = 0
+unfocused_hollow = true
+thickness = 0.18
+
+[selection]
+save_to_clipboard = true
+
+[mouse]
+hide_when_typing = true
+
+# VS Code-inspired neutral black palette
+
+[colors.primary]
+background = "#0f1113"
+foreground = "#d4d4d4"
+dim_foreground = "#8b8f96"
+bright_foreground = "#f0f0f0"
+
+[colors.cursor]
+text = "#0f1113"
+cursor = "#d4d4d4"
+
+[colors.vi_mode_cursor]
+text = "#0f1113"
+cursor = "#c792ea"
+
+[colors.selection]
+text = "#f0f0f0"
+background = "#34383e"
+
+[colors.search.matches]
+foreground = "#0f1113"
+background = "#8bd49c"
+
+[colors.search.focused_match]
+foreground = "#0f1113"
+background = "#ffd700"
+
+[colors.footer_bar]
+foreground = "#d4d4d4"
+background = "#202328"
+
+[colors.normal]
+black   = "#17191c"
+red     = "#ff6b6b"
+green   = "#8bd49c"
+yellow  = "#ffd700"
+blue    = "#82aaff"
+magenta = "#c792ea"
+cyan    = "#89ddff"
+white   = "#d4d4d4"
+
+[colors.bright]
+black   = "#5f6368"
+red     = "#ff8585"
+green   = "#a7e3b5"
+yellow  = "#ffe45c"
+blue    = "#a5c2ff"
+magenta = "#dfa8ff"
+cyan    = "#b2ebff"
+white   = "#f0f0f0"
+
+[colors.dim]
+black   = "#101214"
+red     = "#b84d4d"
+green   = "#659b72"
+yellow  = "#b89d00"
+blue    = "#5d78ad"
+magenta = "#8f68a8"
+cyan    = "#639aaa"
+white   = "#8b8f96"
+
+[bell]
+animation = "EaseOutExpo"
+duration = 120
+color = "#e879d2"
+
+[keyboard]
+bindings = [
+    { key = "C", mods = "Control|Shift", action = "Copy" },
+    { key = "V", mods = "Control|Shift", action = "Paste" },
+    { key = "N", mods = "Control|Shift", action = "CreateNewWindow" },
+    { key = "F11", action = "ToggleFullscreen" },
+    { key = "Equals", mods = "Control", action = "IncreaseFontSize" },
+    { key = "Minus", mods = "Control", action = "DecreaseFontSize" },
+    { key = "Key0", mods = "Control", action = "ResetFontSize" }
+]
