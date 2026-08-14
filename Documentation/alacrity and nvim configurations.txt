@@ -100,6 +100,7 @@ Features configured:
 - zoxide smart directory navigation.
 - fzf VS Code-inspired colours and fd-powered file discovery.
 - Unix-style ls through eza.
+- Portable WinGet tools are resolved from their real package directories when WinGet's normal Links folder is missing. This keeps eza, Yazi, fzf, fd, bat, ripgrep, Lazygit, Fastfetch, and future portable installs available in every PowerShell session.
 - Yazi directory-changing wrapper.
 - Yazi MIME detection through Git for Windows file.exe (`YAZI_FILE_ONE`).
 - Yazi `Shift+E` shortcut opens the highlighted file in Neovim in a new Alacritty window.

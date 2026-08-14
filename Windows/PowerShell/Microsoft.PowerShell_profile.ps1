@@ -17,6 +17,21 @@ if ((Test-Path -LiteralPath $bottomBin) -and $env:Path -notlike "*$bottomBin*") 
     $env:Path = "$bottomBin;$env:Path"
 }
 
+# WinGet's portable-package link folder is missing on this machine. Discover
+# the real executable directories so tools such as Yazi, eza, fzf and any
+# future portable install (for example zellij) are available in every shell.
+$wingetPackageRoot = Join-Path $env:LOCALAPPDATA 'Microsoft\WinGet\Packages'
+if (Test-Path -LiteralPath $wingetPackageRoot) {
+    $wingetToolDirectories = Get-ChildItem -LiteralPath $wingetPackageRoot -Filter '*.exe' -File -Recurse -ErrorAction SilentlyContinue |
+        Select-Object -ExpandProperty DirectoryName -Unique
+
+    foreach ($toolDirectory in $wingetToolDirectories) {
+        if (($env:Path -split ';') -notcontains $toolDirectory) {
+            $env:Path = "$toolDirectory;$env:Path"
+        }
+    }
+}
+
 # Better interactive history and completion.
 if (Get-Module -ListAvailable -Name PSReadLine) {
     Set-PSReadLineOption -EditMode Windows
@@ -46,13 +61,37 @@ $env:FZF_DEFAULT_OPTS = '--height=40% --layout=reverse --border=rounded --info=i
 $env:FZF_DEFAULT_COMMAND = 'fd --type f --hidden --exclude .git'
 
 # Smarter directory navigation: `z project-name`.
+$env:Path += ";C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\ajeetdsouza.zoxide_Microsoft.Winget.Source_8wekyb3d8bbwe"
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
 # Unix-style file listings powered by eza.
-Set-Alias -Name ls -Value eza -Option AllScope -Force
-function ll { eza --long --icons=always --group-directories-first @args }
-function la { eza --long --all --icons=always --group-directories-first @args }
-function lt { eza --tree --level=2 --icons=always --group-directories-first @args }
+# WinGet's portable-package link can occasionally be absent, so find eza's
+# installed executable directly before defining the friendly listing commands.
+$ezaCommand = Get-Command eza -CommandType Application -ErrorAction SilentlyContinue |
+    Select-Object -First 1
+if ($ezaCommand) {
+    $global:KauraEzaPath = $ezaCommand.Source
+} else {
+    $ezaPackageRoot = Join-Path $env:LOCALAPPDATA "Microsoft\WinGet\Packages"
+    $ezaExecutable = Get-ChildItem -Path $ezaPackageRoot -Filter "eza.exe" -File -Recurse -ErrorAction SilentlyContinue |
+        Where-Object { $_.FullName -match "eza-community\.eza" } |
+        Select-Object -First 1
+    $global:KauraEzaPath = if ($ezaExecutable) { $ezaExecutable.FullName } else { $null }
+}
+
+if ($global:KauraEzaPath) {
+    function eza { & $global:KauraEzaPath @args }
+    Set-Alias -Name ls -Value eza -Option AllScope -Force
+    function ll { eza --long --icons=always --group-directories-first @args }
+    function la { eza --long --all --icons=always --group-directories-first @args }
+    function lt { eza --tree --level=2 --icons=always --group-directories-first @args }
+} else {
+    Set-Alias -Name ls -Value Get-ChildItem -Option AllScope -Force
+    function ll { Get-ChildItem @args }
+    function la { Get-ChildItem -Force @args }
+    function lt { Get-ChildItem @args }
+    Write-Warning "eza is not installed; using PowerShell's standard file listing."
+}
 
 # Full-screen terminal applications.
 Set-Alias -Name lg -Value lazygit
@@ -87,3 +126,5 @@ function ff {
 }
 
 Invoke-Expression (&starship init powershell)
+
+function zellij { & "C:\Users\kaura\AppData\Local\Zellij\zellij.exe" options --default-shell powershell.exe $args }

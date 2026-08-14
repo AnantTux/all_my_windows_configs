@@ -1,5 +1,55 @@
 -- Small, practical Neovim baseline.
 vim.g.mapleader = " "
+-- Bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+require("lazy").setup({
+  -- 1. Auto-pairs (Loads only when entering Insert Mode)
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = true,
+  },
+
+  -- 2. File Explorer as a buffer (Loads when pressing '-')
+  {
+    "stevearc/oil.nvim",
+    cmd = "Oil",
+    keys = {
+      { "-", "<cmd>Oil<cr>", desc = "Open parent directory" },
+    },
+    opts = {},
+  },
+
+  -- 3. Git status signs in gutter (Loads when opening a file)
+  {
+    "lewis6991/gitsigns.nvim",
+    event = "BufReadPost",
+    opts = {},
+  },
+
+  -- 4. Fuzzy file searcher (Loads when pressing Leader + f / Leader + g)
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    cmd = "Telescope",
+    keys = {
+      { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
+      { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Find Text (Grep)" },
+    },
+  },
+})
 
 local opt = vim.opt
 
@@ -42,6 +92,7 @@ vim.cmd.colorscheme("vscode_black")
 -- IDE-style error and warning diagnostics.
 vim.diagnostic.config({
   virtual_text = {
+    severity = { min = vim.diagnostic.severity.ERROR },
     spacing = 2,
     prefix = "●",
     source = "if_many",
@@ -54,7 +105,9 @@ vim.diagnostic.config({
       [vim.diagnostic.severity.HINT] = "󰌶",
     },
   },
-  underline = true,
+  underline = {
+    severity = { min = vim.diagnostic.severity.ERROR },
+  },
   update_in_insert = false,
   severity_sort = true,
   float = {
@@ -289,77 +342,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
--- Lightweight auto-pairs without a plugin.
-local bracket_pairs = {
-  ["("] = ")",
-  ["["] = "]",
-  ["{"] = "}",
-}
-
-local quote_pairs = {
-  ['"'] = true,
-  ["'"] = true,
-  ["`"] = true,
-}
-
-local function surrounding_characters()
-  local line = vim.api.nvim_get_current_line()
-  local column = vim.api.nvim_win_get_cursor(0)[2]
-  return line:sub(column, column), line:sub(column + 1, column + 1)
-end
-
-for opening, closing in pairs(bracket_pairs) do
-  vim.keymap.set("i", opening, opening .. closing .. "<Left>", {
-    desc = "Insert matching " .. closing,
-  })
-
-  vim.keymap.set("i", closing, function()
-    local _, next_character = surrounding_characters()
-    return next_character == closing and "<Right>" or closing
-  end, {
-    expr = true,
-    desc = "Step over or insert " .. closing,
-  })
-end
-
-for quote in pairs(quote_pairs) do
-  vim.keymap.set("i", quote, function()
-    local previous_character, next_character = surrounding_characters()
-
-    if next_character == quote then
-      return "<Right>"
-    end
-
-    if previous_character == "\\" or (quote == "'" and previous_character:match("[%w_]")) then
-      return quote
-    end
-
-    return quote .. quote .. "<Left>"
-  end, {
-    expr = true,
-    desc = "Insert matching quote",
-  })
-end
-
-vim.keymap.set("i", "<BS>", function()
-  local previous_character, next_character = surrounding_characters()
-  local is_empty_bracket = bracket_pairs[previous_character] == next_character
-  local is_empty_quote = quote_pairs[previous_character] and previous_character == next_character
-
-  return (is_empty_bracket or is_empty_quote) and "<BS><Del>" or "<BS>"
-end, {
-  expr = true,
-  desc = "Delete an empty pair together",
-})
-
-vim.keymap.set("i", "<CR>", function()
-  local previous_character, next_character = surrounding_characters()
-  return previous_character == "{" and next_character == "}" and "<CR><Esc>O" or "<CR>"
-end, {
-  expr = true,
-  desc = "Open an indented line inside braces",
-})
-
 -- Blend Neovim's background with Alacritty's background.
 local function transparent_background()
   for _, group in ipairs({
@@ -380,3 +362,41 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     diagnostic_colours()
   end,
 })
+
+-- Format Java code manually using Space + f
+vim.keymap.set("n", "<leader>f", function()
+  vim.lsp.buf.format({ async = true })
+end, { desc = "Format current buffer with LSP" })
+
+-- Auto-format Java on save
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.java",
+  callback = function(args)
+    vim.lsp.buf.format({ bufnr = args.buf, timeout_ms = 2000 })
+  end,
+})
+
+-- Toggle warning virtual text and underlines on demand with Space + t + w
+local show_warnings = false
+
+vim.keymap.set("n", "<leader>tw", function()
+  show_warnings = not show_warnings
+
+  vim.diagnostic.config({
+    virtual_text = show_warnings and {
+      spacing = 2,
+      prefix = "●",
+      source = "if_many",
+    } or {
+      severity = { min = vim.diagnostic.severity.ERROR },
+      spacing = 2,
+      prefix = "●",
+      source = "if_many",
+    },
+    underline = show_warnings and true or {
+      severity = { min = vim.diagnostic.severity.ERROR },
+    },
+  })
+
+  print("Warnings " .. (show_warnings and "Enabled" or "Disabled"))
+end, { desc = "Toggle warning details inline" })
