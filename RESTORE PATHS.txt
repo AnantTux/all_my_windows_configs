@@ -46,6 +46,11 @@ Paste at: C:\Users\kaura\.gitconfig
 
 Backup: Windows\Yazi\keymap.toml
 Paste at: C:\Users\kaura\AppData\Roaming\yazi\config\keymap.toml
+Backup folder: Windows\AutoHotkey
+Paste its files into: D:\Auto-hot Key Scripts
+
+This includes Combined_shortcuts.ahk, VirtualDesktopAccessor.dll, and the
+ChatGPT AutoHotkey Utility folder. Keep the DLL beside Combined_shortcuts.ahk.
 
 Backup: Windows\Windows Terminal\settings.json
 Paste at: C:\Users\kaura\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
