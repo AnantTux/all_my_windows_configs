@@ -179,5 +179,5 @@ alias gds='git diff --staged'
 command -v starship >/dev/null 2>&1 && eval "$(starship init bash)"
 
 # Attach ble.sh only after the prompt and other shell integrations are ready.
-declare -F ble-attach >/dev/null 2>&1 && ble-attach
+# Disabled: ble-attach provides inline autosuggestions. Uncomment this line to restore it.
 # <<< Codex WSL enhancements <<<
