@@ -25,31 +25,34 @@ local colors = {
 }
 
 local groups = {
-  Normal = { fg = colors.fg, bg = colors.bg },
-  NormalNC = { fg = colors.fg, bg = colors.bg },
-  NormalFloat = { fg = colors.fg, bg = colors.bg_alt },
-  FloatBorder = { fg = colors.muted, bg = colors.bg_alt },
-  ColorColumn = { bg = colors.bg_alt },
-  Cursor = { fg = colors.bg, bg = colors.bright },
-  CursorLine = { bg = colors.bg_cursor },
-  CursorColumn = { bg = colors.bg_cursor },
-  LineNr = { fg = colors.muted },
-  CursorLineNr = { fg = colors.bright, bold = true },
-  SignColumn = { fg = colors.muted, bg = colors.bg },
-  EndOfBuffer = { fg = colors.bg },
-  Visual = { bg = colors.bg_visual },
-  Search = { fg = colors.bg, bg = colors.yellow },
-  IncSearch = { fg = colors.bg, bg = colors.orange },
-  MatchParen = { fg = colors.yellow, bold = true },
-  Pmenu = { fg = colors.fg, bg = colors.bg_alt },
-  PmenuSel = { fg = colors.bright, bg = colors.bg_visual, bold = true },
-  StatusLine = { fg = colors.fg, bg = colors.bg_cursor },
-  StatusLineNC = { fg = colors.muted, bg = colors.bg_alt },
-  WinSeparator = { fg = colors.bg_visual },
-  VertSplit = { fg = colors.bg_visual },
-  Folded = { fg = colors.muted, bg = colors.bg_alt },
-  Title = { fg = colors.blue, bold = true },
-  Directory = { fg = colors.blue },
+  -- ── Backgrounds: intentionally transparent so any terminal shows through ──
+  Normal          = { fg = colors.fg },           -- no bg → terminal background
+  NormalNC        = { fg = colors.fg },           -- inactive windows too
+  NormalFloat     = { fg = colors.fg },           -- float windows (hover, diagnostics)
+  FloatBorder     = { fg = colors.muted },        -- float borders
+  SignColumn      = { fg = colors.muted },        -- gutter (git signs, diagnostics)
+  EndOfBuffer     = { fg = colors.bg },           -- ~ markers at end of file
+  StatusLine      = { fg = colors.fg },           -- active statusline
+  StatusLineNC    = { fg = colors.muted },        -- inactive statusline
+  WinSeparator    = { fg = colors.bg_visual },
+  VertSplit       = { fg = colors.bg_visual },
+  -- ── Elements that should keep a subtle bg for readability ─────────────────
+  ColorColumn     = { bg = colors.bg_alt },
+  Cursor          = { fg = colors.bg, bg = colors.bright },
+  CursorLine      = { bg = colors.bg_cursor },
+  CursorColumn    = { bg = colors.bg_cursor },
+  LineNr          = { fg = colors.muted },
+  CursorLineNr    = { fg = colors.bright, bold = true },
+  Visual          = { bg = colors.bg_visual },
+  Search          = { fg = colors.bg, bg = colors.yellow },
+  IncSearch       = { fg = colors.bg, bg = colors.orange },
+  MatchParen      = { fg = colors.yellow, bold = true },
+  Pmenu           = { fg = colors.fg, bg = colors.bg_alt }, -- keep bg: completion menu must be readable
+  PmenuSel        = { fg = colors.bright, bg = colors.bg_visual, bold = true },
+  Folded          = { fg = colors.muted, bg = colors.bg_alt },
+  Title           = { fg = colors.blue, bold = true },
+  Directory       = { fg = colors.blue },
+
 
   Comment = { fg = colors.comment, italic = true },
   Constant = { fg = colors.orange },

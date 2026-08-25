@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Neovim Cheatsheet — final_nvim_updates</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700;900&display=swap');
+
+  :root {
+    --bg:       #0f1113;
+    --bg-alt:   #17191c;
+    --bg-card:  #1c1f23;
+    --border:   #2a2d33;
+    --fg:       #d4d4d4;
+    --bright:   #f0f0f0;
+    --muted:    #6f737a;
+    --red:      #ff6b6b;
+    --orange:   #ff9e64;
+    --yellow:   #ffd700;
+    --green:    #8bd49c;
+    --cyan:     #89ddff;
+    --blue:     #82aaff;
+    --violet:   #c792ea;
+    --pink:     #e879d2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    line-height: 1.5;
+    padding: 20px;
+  }
+
+  header {
+    text-align: center;
+    padding: 18px 0 14px;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 18px;
+  }
+  header h1 { font-size: 26px; font-weight: 900; color: var(--bright); letter-spacing: 1px; }
+  header h1 span { color: var(--blue); }
+  header p { color: var(--muted); font-size: 11px; margin-top: 4px; }
+  header .leader-note {
+    display: inline-block; margin-top: 8px;
+    background: var(--bg-alt); border: 1px solid var(--border); border-radius: 6px;
+    padding: 4px 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--yellow);
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .col-2 { grid-column: span 2; }
+  .col-3 { grid-column: span 3; }
+
+  .section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .section-header {
+    padding: 7px 12px; font-weight: 700; font-size: 11px; letter-spacing: 0.8px;
+    text-transform: uppercase; display: flex; align-items: center; gap: 7px;
+  }
+  .section-header .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .theme-blue   .section-header { background: #0e1929; color: var(--blue);   border-bottom: 1px solid #1a2d4a; }
+  .theme-blue   .dot            { background: var(--blue); }
+  .theme-violet .section-header { background: #160e20; color: var(--violet); border-bottom: 1px solid #2e1a42; }
+  .theme-violet .dot            { background: var(--violet); }
+  .theme-green  .section-header { background: #0e1e14; color: var(--green);  border-bottom: 1px solid #1a3a24; }
+  .theme-green  .dot            { background: var(--green); }
+  .theme-yellow .section-header { background: #1e1a08; color: var(--yellow); border-bottom: 1px solid #3a3010; }
+  .theme-yellow .dot            { background: var(--yellow); }
+  .theme-red    .section-header { background: #1f0d0d; color: var(--red);    border-bottom: 1px solid #3d1a1a; }
+  .theme-red    .dot            { background: var(--red); }
+  .theme-cyan   .section-header { background: #0a1a20; color: var(--cyan);   border-bottom: 1px solid #14303c; }
+  .theme-cyan   .dot            { background: var(--cyan); }
+  .theme-orange .section-header { background: #1e1208; color: var(--orange); border-bottom: 1px solid #3a2210; }
+  .theme-orange .dot            { background: var(--orange); }
+  .theme-pink   .section-header { background: #1e0a18; color: var(--pink);   border-bottom: 1px solid #3d1430; }
+  .theme-pink   .dot            { background: var(--pink); }
+
+  table { width: 100%; border-collapse: collapse; }
+  tr:nth-child(even) { background: rgba(255,255,255,0.025); }
+  td { padding: 4px 10px; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  tr:last-child td { border-bottom: none; }
+
+  .key { font-family: 'JetBrains Mono', monospace; white-space: nowrap; font-size: 10.5px; font-weight: 700; color: var(--bright); }
+  .desc { color: var(--fg); }
+  .tag { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.5px; }
+  .tag-v  { background: #1a2d4a; color: var(--blue); }
+  .tag-i  { background: #0e1e14; color: var(--green); }
+  .tag-j  { background: #160e20; color: var(--violet); }
+
+  .divider td {
+    font-size: 9px; font-weight: 700; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 1px; padding: 5px 10px 2px; border-bottom: 1px solid var(--border);
+    background: var(--bg-alt) !important;
+  }
+
+  .note {
+    margin: 10px 12px 12px; padding: 7px 10px;
+    background: rgba(255,215,0,0.07); border-left: 3px solid var(--yellow);
+    border-radius: 0 4px 4px 0; font-size: 10px; color: var(--muted); line-height: 1.6;
+  }
+  .note strong { color: var(--yellow); }
+
+  footer { text-align: center; margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--muted); font-size: 10px; }
+
+  @media print {
+    body { background: #fff; color: #111; font-size: 9px; padding: 8px; }
+    :root { --bg: #fff; --bg-alt: #f5f5f5; --bg-card: #fafafa; --border: #ddd; --fg: #222; --bright: #000; --muted: #666; }
+    .key { color: #000; }
+    .section { border: 1px solid #ccc; page-break-inside: avoid; }
+    .section-header { color: #000 !important; background: #eee !important; border-bottom: 1px solid #ccc !important; }
+    .dot { display: none; }
+    .tag-v { background: #dce8ff; color: #003a9b; }
+    .tag-i { background: #dcffe8; color: #005a20; }
+    .tag-j { background: #eedcff; color: #5a0090; }
+    .note { background: #fffde0; border-left-color: #cca000; color: #555; }
+    header h1 span { color: #0050d0; }
+    footer { color: #888; }
+    .leader-note { background: #f0f0f0; border-color: #ccc; color: #7a6000; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Neovim <span>Cheatsheet</span></h1>
+  <p>final_nvim_updates &middot; All custom keymaps, plugins, and window management</p>
+  <div class="leader-note">Leader key = &lt;Space&gt;</div>
+</header>
+
+<div class="grid">
+
+  <!-- FILE & SEARCH -->
+  <div class="section theme-blue">
+    <div class="section-header"><span class="dot"></span>File &amp; Search (Telescope)</div>
+    <table>
+      <tr><td class="key">&lt;leader&gt;ff</td><td class="desc">Find files in project</td></tr>
+      <tr><td class="key">&lt;leader&gt;fg</td><td class="desc">Live grep — search text across all files</td></tr>
+      <tr><td class="key">&lt;leader&gt;fb</td><td class="desc">Browse open buffers</td></tr>
+      <tr><td class="key">&lt;leader&gt;fr</td><td class="desc">Recent files</td></tr>
+      <tr><td class="key">&lt;leader&gt;ft</td><td class="desc">Find TODOs / FIXMEs (todo-comments)</td></tr>
+      <tr><td class="key">-</td><td class="desc">Open parent directory (oil.nvim)</td></tr>
+    </table>
+  </div>
+
+  <!-- LSP -->
+  <div class="section theme-violet">
+    <div class="section-header"><span class="dot"></span>LSP — Language Intelligence</div>
+    <table>
+      <tr><td class="key">gd</td><td class="desc">Go to definition</td></tr>
+      <tr><td class="key">gr</td><td class="desc">Find all references</td></tr>
+      <tr><td class="key">K</td><td class="desc">Hover documentation</td></tr>
+      <tr><td class="key">&lt;leader&gt;rn</td><td class="desc">Rename symbol across project</td></tr>
+      <tr><td class="key">&lt;leader&gt;ca</td><td class="desc">Code actions (quick fixes, imports)</td></tr>
+      <tr><td class="key">&lt;leader&gt;f</td><td class="desc">Format buffer (Java uses jdtls only)</td></tr>
+      <tr><td class="key">:w (on save)</td><td class="desc">Auto-format: JS/TS/CSS/HTML/Java/JSON</td></tr>
+    </table>
+  </div>
+
+  <!-- DIAGNOSTICS -->
+  <div class="section theme-red">
+    <div class="section-header"><span class="dot"></span>Diagnostics &amp; Errors</div>
+    <table>
+      <tr><td class="key">]d</td><td class="desc">Jump to next diagnostic</td></tr>
+      <tr><td class="key">[d</td><td class="desc">Jump to previous diagnostic</td></tr>
+      <tr><td class="key">&lt;leader&gt;d</td><td class="desc">Show diagnostic detail in float</td></tr>
+      <tr><td class="key">&lt;leader&gt;q</td><td class="desc">Send diagnostics to location list</td></tr>
+      <tr><td class="key">&lt;leader&gt;tw</td><td class="desc">Toggle warning inline hints on/off</td></tr>
+    </table>
+  </div>
+
+  <!-- GIT -->
+  <div class="section theme-yellow">
+    <div class="section-header"><span class="dot"></span>Git (gitsigns.nvim)</div>
+    <table>
+      <tr><td class="key">&lt;leader&gt;gp</td><td class="desc">Preview git hunk diff inline</td></tr>
+      <tr><td class="key">&lt;leader&gt;gs</td><td class="desc">Stage git hunk under cursor</td></tr>
+      <tr><td class="key">&lt;leader&gt;gr</td><td class="desc">Reset git hunk to HEAD</td></tr>
+    </table>
+    <div class="note"><strong>Gutter signs:</strong> ▎ added &nbsp; ~ changed &nbsp; _ removed — update automatically on save.</div>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="section theme-green">
+    <div class="section-header"><span class="dot"></span>Comments (Comment.nvim)</div>
+    <table>
+      <tr><td class="key">gcc</td><td class="desc">Toggle comment on current line</td></tr>
+      <tr><td class="key">gc</td><td class="desc"><span class="tag tag-v">Visual</span> Toggle comment on selection</td></tr>
+      <tr><td class="key">gcip</td><td class="desc">Comment entire paragraph</td></tr>
+      <tr><td class="key">gcO</td><td class="desc">Add comment line above cursor</td></tr>
+      <tr><td class="key">gco</td><td class="desc">Add comment line below cursor</td></tr>
+    </table>
+    <div class="note"><strong>todo-comments:</strong> <strong style="color:#ff6b6b">FIXME</strong> <strong style="color:#ffd700">TODO</strong> <strong style="color:#89ddff">NOTE</strong> <strong style="color:#ff9e64">HACK</strong> <strong style="color:#c792ea">WARN</strong> <strong style="color:#8bd49c">PERF</strong> auto-highlighted.</div>
+  </div>
+
+  <!-- COMPLETION -->
+  <div class="section theme-cyan">
+    <div class="section-header"><span class="dot"></span>Auto-completion (blink.cmp)</div>
+    <table>
+      <tr><td class="key">Tab / &darr;</td><td class="desc"><span class="tag tag-i">Insert</span> Select next suggestion</td></tr>
+      <tr><td class="key">Shift+Tab / &uarr;</td><td class="desc"><span class="tag tag-i">Insert</span> Select previous suggestion</td></tr>
+      <tr><td class="key">Enter</td><td class="desc"><span class="tag tag-i">Insert</span> Confirm selected item</td></tr>
+      <tr><td class="key">Ctrl+Space</td><td class="desc"><span class="tag tag-i">Insert</span> Manually trigger completion</td></tr>
+      <tr><td class="key">Ctrl+e</td><td class="desc"><span class="tag tag-i">Insert</span> Dismiss completion menu</td></tr>
+      <tr><td class="key">(ghost text)</td><td class="desc">Grey preview of best suggestion inline</td></tr>
+    </table>
+  </div>
+
+  <!-- TREESITTER TEXT OBJECTS — FULL WIDTH -->
+  <div class="section theme-orange col-3">
+    <div class="section-header"><span class="dot"></span>Treesitter Text Objects &amp; Navigation (nvim-treesitter-textobjects)</div>
+    <table>
+      <tr class="divider"><td colspan="3">Motion — Jump between code structures</td></tr>
+      <tr><td class="key">]m</td><td class="desc">Jump to next method / function start</td><td></td></tr>
+      <tr><td class="key">[m</td><td class="desc">Jump to previous method / function start</td><td></td></tr>
+      <tr><td class="key">]M</td><td class="desc">Jump to next method / function end</td><td></td></tr>
+      <tr><td class="key">[M</td><td class="desc">Jump to previous method / function end</td><td></td></tr>
+      <tr><td class="key">]]</td><td class="desc">Jump to next class start</td><td></td></tr>
+      <tr><td class="key">[[</td><td class="desc">Jump to previous class start</td><td></td></tr>
+
+      <tr class="divider"><td colspan="3">Select — Operator-pending (combine with v, d, y, c, &gt;, etc.)</td></tr>
+      <tr><td class="key">af</td><td class="desc"><span class="tag tag-v">Visual</span> Select <strong>around</strong> function (including signature + braces)</td><td></td></tr>
+      <tr><td class="key">if</td><td class="desc"><span class="tag tag-v">Visual</span> Select <strong>inside</strong> function body</td><td></td></tr>
+      <tr><td class="key">ac</td><td class="desc"><span class="tag tag-v">Visual</span> Select <strong>around</strong> class</td><td></td></tr>
+      <tr><td class="key">ic</td><td class="desc"><span class="tag tag-v">Visual</span> Select <strong>inside</strong> class body</td><td></td></tr>
+      <tr><td class="key">aa</td><td class="desc"><span class="tag tag-v">Visual</span> Select <strong>around</strong> argument / parameter</td><td></td></tr>
+      <tr><td class="key">ia</td><td class="desc"><span class="tag tag-v">Visual</span> Select <strong>inside</strong> argument / parameter</td><td></td></tr>
+
+      <tr class="divider"><td colspan="3">Swap — Reorder parameters without copy-paste</td></tr>
+      <tr><td class="key">&lt;leader&gt;sn</td><td class="desc">Swap current parameter with next</td><td></td></tr>
+      <tr><td class="key">&lt;leader&gt;sp</td><td class="desc">Swap current parameter with previous</td><td></td></tr>
+    </table>
+    <div class="note"><strong>Example:</strong> Standing on a Java method &rarr; press <strong>vaf</strong> to select the whole method &rarr; <strong>d</strong> to delete it, <strong>y</strong> to copy it, or <strong>&gt;</strong> to indent it.</div>
+  </div>
+
+  <!-- JAVA LSP -->
+  <div class="section theme-violet col-2">
+    <div class="section-header"><span class="dot"></span>Java — LSP &amp; Refactoring (nvim-jdtls) &nbsp;<span class="tag tag-j">Java Only</span></div>
+    <table>
+      <tr class="divider"><td colspan="2">Running</td></tr>
+      <tr><td class="key">&lt;F5&gt;</td><td class="desc">Run Java app (Gradle &rarr; Maven &rarr; plain javac fallback)</td></tr>
+      <tr><td class="key">&lt;leader&gt;r</td><td class="desc">Run Java application (same as F5)</td></tr>
+      <tr><td class="key">&lt;leader&gt;jt</td><td class="desc">Gradle / Maven task picker (interactive list in terminal split)</td></tr>
+
+      <tr class="divider"><td colspan="2">Imports &amp; Code Generation</td></tr>
+      <tr><td class="key">&lt;leader&gt;oi</td><td class="desc">Organize imports — remove unused, resolve missing</td></tr>
+      <tr><td class="key">&lt;leader&gt;jg</td><td class="desc">Generate code — toString, hashCode/equals, getters/setters, constructors</td></tr>
+
+      <tr class="divider"><td colspan="2">Refactoring</td></tr>
+      <tr><td class="key">&lt;leader&gt;rv</td><td class="desc">Extract variable (also works on visual selection)</td></tr>
+      <tr><td class="key">&lt;leader&gt;rm</td><td class="desc">Extract method (also works on visual selection)</td></tr>
+      <tr><td class="key">&lt;leader&gt;rc</td><td class="desc">Extract constant</td></tr>
+
+      <tr class="divider"><td colspan="2">Testing (requires java-test extension in nvim-tools)</td></tr>
+      <tr><td class="key">&lt;leader&gt;tc</td><td class="desc">Run entire test class</td></tr>
+      <tr><td class="key">&lt;leader&gt;tm</td><td class="desc">Run nearest test method under cursor</td></tr>
+    </table>
+  </div>
+
+  <!-- DAP DEBUGGER -->
+  <div class="section theme-red">
+    <div class="section-header"><span class="dot"></span>Debugger (DAP) &nbsp;<span class="tag tag-j">Java Only</span></div>
+    <table>
+      <tr class="divider"><td colspan="2">Session Control</td></tr>
+      <tr><td class="key">&lt;F8&gt;</td><td class="desc">Continue / Start debug session</td></tr>
+      <tr><td class="key">&lt;leader&gt;dc</td><td class="desc">Continue debug session</td></tr>
+      <tr><td class="key">&lt;leader&gt;dx</td><td class="desc">Terminate debug session</td></tr>
+      <tr><td class="key">&lt;leader&gt;dr</td><td class="desc">Open debug REPL console</td></tr>
+      <tr><td class="key">&lt;leader&gt;du</td><td class="desc">Toggle DAP UI panels</td></tr>
+
+      <tr class="divider"><td colspan="2">Breakpoints</td></tr>
+      <tr><td class="key">&lt;F9&gt;</td><td class="desc">Toggle breakpoint on current line</td></tr>
+      <tr><td class="key">&lt;leader&gt;db</td><td class="desc">Toggle breakpoint (same as F9)</td></tr>
+
+      <tr class="divider"><td colspan="2">Stepping</td></tr>
+      <tr><td class="key">&lt;F10&gt;</td><td class="desc">Step over (next line)</td></tr>
+      <tr><td class="key">&lt;F11&gt;</td><td class="desc">Step into (enter called method)</td></tr>
+      <tr><td class="key">&lt;F12&gt;</td><td class="desc">Step out (return from current method)</td></tr>
+    </table>
+  </div>
+
+  <!-- WINDOW MANAGEMENT -->
+  <div class="section theme-cyan">
+    <div class="section-header"><span class="dot"></span>Window Management</div>
+    <table>
+      <tr class="divider"><td colspan="2">Opening Splits</td></tr>
+      <tr><td class="key">Ctrl+w s</td><td class="desc">Horizontal split (also :sp)</td></tr>
+      <tr><td class="key">Ctrl+w v</td><td class="desc">Vertical split (also :vs)</td></tr>
+
+      <tr class="divider"><td colspan="2">Navigation</td></tr>
+      <tr><td class="key">Ctrl+w h</td><td class="desc">Move to left window</td></tr>
+      <tr><td class="key">Ctrl+w l</td><td class="desc">Move to right window</td></tr>
+      <tr><td class="key">Ctrl+w j</td><td class="desc">Move to window below</td></tr>
+      <tr><td class="key">Ctrl+w k</td><td class="desc">Move to window above</td></tr>
+
+      <tr class="divider"><td colspan="2">Resizing</td></tr>
+      <tr><td class="key">Ctrl+w =</td><td class="desc">Equalise all window sizes</td></tr>
+      <tr><td class="key">Ctrl+w &gt;</td><td class="desc">Increase width</td></tr>
+      <tr><td class="key">Ctrl+w &lt;</td><td class="desc">Decrease width</td></tr>
+      <tr><td class="key">Ctrl+w +</td><td class="desc">Increase height</td></tr>
+      <tr><td class="key">Ctrl+w -</td><td class="desc">Decrease height</td></tr>
+      <tr><td class="key">Ctrl+w _</td><td class="desc">Maximise height</td></tr>
+      <tr><td class="key">Ctrl+w |</td><td class="desc">Maximise width</td></tr>
+
+      <tr class="divider"><td colspan="2">Closing</td></tr>
+      <tr><td class="key">Ctrl+w q</td><td class="desc">Close current window</td></tr>
+      <tr><td class="key">Ctrl+w o</td><td class="desc">Close all other windows (keep only this)</td></tr>
+      <tr><td class="key">:qa</td><td class="desc">Quit all windows</td></tr>
+    </table>
+    <div class="note"><strong>Config:</strong> New splits open <strong>below</strong> and to the <strong>right</strong> by default.</div>
+  </div>
+
+  <!-- BUFFER MANAGEMENT -->
+  <div class="section theme-blue">
+    <div class="section-header"><span class="dot"></span>Buffer Management</div>
+    <table>
+      <tr><td class="key">:bn / :bnext</td><td class="desc">Next buffer</td></tr>
+      <tr><td class="key">:bp / :bprev</td><td class="desc">Previous buffer</td></tr>
+      <tr><td class="key">:bd</td><td class="desc">Delete (close) current buffer</td></tr>
+      <tr><td class="key">:b#</td><td class="desc">Toggle to last used buffer</td></tr>
+      <tr><td class="key">&lt;leader&gt;fb</td><td class="desc">Telescope buffer picker</td></tr>
+      <tr><td class="key">:w</td><td class="desc">Save buffer (triggers auto-format)</td></tr>
+      <tr><td class="key">:wa</td><td class="desc">Save all open buffers</td></tr>
+    </table>
+  </div>
+
+  <!-- GENERAL -->
+  <div class="section theme-green">
+    <div class="section-header"><span class="dot"></span>General &amp; Miscellaneous</div>
+    <table>
+      <tr><td class="key">&lt;Esc&gt;</td><td class="desc">Clear search highlight</td></tr>
+      <tr><td class="key">y / p</td><td class="desc">Yank / paste — uses system clipboard</td></tr>
+      <tr><td class="key">u / Ctrl+r</td><td class="desc">Undo / Redo (persistent across sessions)</td></tr>
+      <tr><td class="key">:e $MYVIMRC</td><td class="desc">Open init.lua config file</td></tr>
+      <tr><td class="key">:Lazy</td><td class="desc">Open lazy.nvim plugin manager UI</td></tr>
+      <tr><td class="key">:Lazy sync</td><td class="desc">Install / update all plugins</td></tr>
+      <tr><td class="key">:TSUpdate</td><td class="desc">Update treesitter parsers</td></tr>
+      <tr><td class="key">:checkhealth</td><td class="desc">Neovim health diagnostics</td></tr>
+    </table>
+  </div>
+
+  <!-- OIL.NVIM -->
+  <div class="section theme-orange">
+    <div class="section-header"><span class="dot"></span>File Explorer (oil.nvim)</div>
+    <table>
+      <tr><td class="key">-</td><td class="desc">Open parent directory as editable buffer</td></tr>
+      <tr><td class="key">Enter</td><td class="desc">Open file or enter directory</td></tr>
+      <tr><td class="key">-</td><td class="desc">Go up to parent (press again)</td></tr>
+      <tr><td class="key">_</td><td class="desc">Open CWD (project root)</td></tr>
+      <tr><td class="key">g?</td><td class="desc">Show all oil keymaps (help)</td></tr>
+      <tr><td class="key">gx</td><td class="desc">Open with system default application</td></tr>
+      <tr><td class="key">:w (in oil)</td><td class="desc">Commit all pending renames / deletes / moves</td></tr>
+    </table>
+    <div class="note"><strong>Tip:</strong> Edit filenames to rename. Delete lines to delete files. All changes apply on <strong>:w</strong>.</div>
+  </div>
+
+  <!-- WHICH-KEY & AUTO -->
+  <div class="section theme-pink">
+    <div class="section-header"><span class="dot"></span>Which-key &amp; Smart Auto Features</div>
+    <table>
+      <tr class="divider"><td colspan="2">which-key.nvim</td></tr>
+      <tr><td class="key">&lt;leader&gt; (pause)</td><td class="desc">Popup guide shows all keymaps after 500ms</td></tr>
+      <tr><td class="key">Ctrl+w (pause)</td><td class="desc">Shows all window management options</td></tr>
+
+      <tr class="divider"><td colspan="2">nvim-autopairs</td></tr>
+      <tr><td class="key">( [ { " '</td><td class="desc"><span class="tag tag-i">Insert</span> Auto-closes matching bracket/quote</td></tr>
+      <tr><td class="key">Enter</td><td class="desc"><span class="tag tag-i">Insert</span> Smart expand between brackets</td></tr>
+      <tr><td class="key">Backspace</td><td class="desc"><span class="tag tag-i">Insert</span> Deletes both pair characters at once</td></tr>
+
+      <tr class="divider"><td colspan="2">Automatic behaviours</td></tr>
+      <tr><td class="key">(any yank)</td><td class="desc">Yanked region briefly flashes yellow</td></tr>
+      <tr><td class="key">(any :w)</td><td class="desc">fidget.nvim shows LSP indexing spinner</td></tr>
+      <tr><td class="key">:s/find/replace</td><td class="desc">Live preview in a split (inccommand=split)</td></tr>
+    </table>
+  </div>
+
+  <!-- SEARCH & REPLACE -->
+  <div class="section theme-yellow">
+    <div class="section-header"><span class="dot"></span>Search &amp; Replace</div>
+    <table>
+      <tr><td class="key">/pattern</td><td class="desc">Search forward</td></tr>
+      <tr><td class="key">?pattern</td><td class="desc">Search backward</td></tr>
+      <tr><td class="key">n / N</td><td class="desc">Next / previous match</td></tr>
+      <tr><td class="key">*</td><td class="desc">Search word under cursor (forward)</td></tr>
+      <tr><td class="key">#</td><td class="desc">Search word under cursor (backward)</td></tr>
+      <tr><td class="key">:%s/old/new/g</td><td class="desc">Replace all in file (live preview in split)</td></tr>
+      <tr><td class="key">:s/old/new/g</td><td class="desc">Replace all in current line</td></tr>
+      <tr><td class="key">:%s/old/new/gc</td><td class="desc">Replace all with confirmation each time</td></tr>
+      <tr><td class="key">&lt;leader&gt;fg</td><td class="desc">Telescope grep — search across entire project</td></tr>
+      <tr><td class="key">&lt;Esc&gt;</td><td class="desc">Clear search highlights</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<footer>
+  <p>Leader = &lt;Space&gt; &nbsp;&middot;&nbsp; Config: <strong>%LOCALAPPDATA%\nvim\init.lua</strong> &nbsp;&middot;&nbsp; Plugins: lazy.nvim &nbsp;&middot;&nbsp;
+  <strong style="color:#c792ea">Java Only</strong> = requires open .java file &nbsp;&middot;&nbsp;
+  <strong style="color:#8bd49c">Insert</strong> = insert mode &nbsp;&middot;&nbsp;
+  <strong style="color:#82aaff">Visual</strong> = visual mode selection</p>
+  <p style="margin-top:5px; color:#555">To save as PDF: open in browser &rarr; Ctrl+P &rarr; Save as PDF &rarr; uncheck headers/footers &rarr; set margins to Minimum</p>
+</footer>
+
+</body>
+</html>

@@ -164,11 +164,10 @@ require("lazy").setup({
     opts_extend = { "sources.default" },
   },
 
-  -- 7. Treesitter for syntax highlighting + text objects (e.g. ]m next method, vif select function body)
+  -- 7. Treesitter for real-time syntax highlighting
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-    dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
     config = function()
       require("nvim-treesitter.install").prefer_git = true
       local ok, configs = pcall(require, "nvim-treesitter.configs")
@@ -176,45 +175,6 @@ require("lazy").setup({
         configs.setup({
           ensure_installed = { "java", "lua", "vim", "javascript", "python" },
           highlight = { enable = true },
-          textobjects = {
-            select = {
-              enable = true,
-              lookahead = true, -- jump forward to textobj automatically
-              keymaps = {
-                ["af"] = "@function.outer", -- around function
-                ["if"] = "@function.inner", -- inside function
-                ["ac"] = "@class.outer",    -- around class
-                ["ic"] = "@class.inner",    -- inside class
-                ["aa"] = "@parameter.outer",-- around argument
-                ["ia"] = "@parameter.inner",-- inside argument
-              },
-            },
-            move = {
-              enable = true,
-              set_jumps = true,
-              goto_next_start = {
-                ["]m"] = "@function.outer", -- next method start
-                ["]]"] = "@class.outer",
-              },
-              goto_next_end = {
-                ["]M"] = "@function.outer", -- next method end
-                ["]["] = "@class.outer",
-              },
-              goto_previous_start = {
-                ["[m"] = "@function.outer", -- prev method start
-                ["[["] = "@class.outer",
-              },
-              goto_previous_end = {
-                ["[M"] = "@function.outer",
-                ["[]"] = "@class.outer",
-              },
-            },
-            swap = {
-              enable = true,
-              swap_next     = { ["<leader>sn"] = "@parameter.inner" },
-              swap_previous = { ["<leader>sp"] = "@parameter.inner" },
-            },
-          },
         })
       end
     end,
@@ -256,45 +216,6 @@ require("lazy").setup({
         window = { winblend = 0 }, -- match transparent background
       },
     },
-  },
-
-  -- 12. nvim-jdtls: enhances jdtls with Java-only features not in generic LSP
-  --     (organize imports, refactoring, code generation, test runner, DAP bridge)
-  {
-    "mfussenegger/nvim-jdtls",
-    ft = "java", -- only loads when a .java file is opened
-  },
-
-  -- 13. DAP core — debug adapter protocol client
-  {
-    "mfussenegger/nvim-dap",
-    ft = "java",
-  },
-
-  -- 14. DAP UI — visual debugger panels (variables, breakpoints, call stack, etc.)
-  {
-    "rcarriga/nvim-dap-ui",
-    ft = "java",
-    dependencies = {
-      "mfussenegger/nvim-dap",
-      "nvim-neotest/nvim-nio", -- async I/O library required by dap-ui
-    },
-    config = function()
-      local dap, dapui = require("dap"), require("dapui")
-      dapui.setup()
-      -- Auto-open/close the UI when a debug session starts or ends
-      dap.listeners.after.event_initialized["dapui_config"] = dapui.open
-      dap.listeners.before.event_terminated["dapui_config"] = dapui.close
-      dap.listeners.before.event_exited["dapui_config"] = dapui.close
-    end,
-  },
-
-  -- 15. Show variable values inline next to their declarations during debug
-  {
-    "theHamsta/nvim-dap-virtual-text",
-    ft = "java",
-    dependencies = { "mfussenegger/nvim-dap", "nvim-treesitter/nvim-treesitter" },
-    opts = {},
   },
 })
 
@@ -450,8 +371,57 @@ local jdtls_launcher = vim.fs.joinpath(
   "plugins",
   "org.eclipse.equinox.launcher_1.7.200.v20260619-2039.jar"
 )
--- jdtls is managed by nvim-jdtls via the FileType java autocmd at the bottom of this file.
--- The java21 / jdtls_home / jdtls_launcher variables defined above are used there.
+
+vim.lsp.config("jdtls", {
+  -- When cmd is a function, it must return a vim.lsp.rpc.PublicClient (an RPC
+  -- transport). vim.lsp.rpc.start() does exactly that — Neovim then calls
+  -- .request() on it to initialize the server. Returning a plain list here
+  -- would cause "attempt to call field 'request' (a nil value)".
+  cmd = function(dispatchers, config)
+    local root = config.root_dir or vim.fn.getcwd()
+    local workspace = vim.fs.joinpath(
+      vim.fn.stdpath("data"),
+      "jdtls-workspaces",
+      vim.fn.sha256(root):sub(1, 16)
+    )
+    vim.fn.mkdir(workspace, "p")
+
+    return vim.lsp.rpc.start({
+      java21,
+      "-Declipse.application=org.eclipse.jdt.ls.core.id1",
+      "-Dosgi.bundles.defaultStartLevel=4",
+      "-Declipse.product=org.eclipse.jdt.ls.core.product",
+      "-Dlog.protocol=true",
+      "-Dlog.level=ALL",
+      "-Xmx1g",
+      "--add-modules=ALL-SYSTEM",
+      "--add-opens", "java.base/java.util=ALL-UNNAMED",
+      "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+      "-jar", jdtls_launcher,
+      "-configuration", vim.fs.joinpath(jdtls_home, "config_win"),
+      "-data", workspace,
+    }, dispatchers)
+  end,
+  filetypes = { "java" },
+  root_dir = function(bufnr, on_dir)
+    local root = vim.fs.root(bufnr, {
+      "mvnw",
+      "gradlew",
+      "pom.xml",
+      "build.gradle",
+      "build.gradle.kts",
+      "settings.gradle",
+      "settings.gradle.kts",
+      ".git",
+    })
+    on_dir(root or vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr)))
+  end,
+  settings = {
+    java = {
+      signatureHelp = { enabled = true },
+    },
+  },
+})
 
 vim.lsp.config("eslint", {
   cmd = npm_server("vscode-langservers-extracted", "bin", "vscode-eslint-language-server"),
@@ -529,7 +499,7 @@ vim.lsp.enable({
   "css",
   "eslint",
   "clangd",
-  -- jdtls is intentionally omitted — nvim-jdtls handles it via FileType java
+  "jdtls",
   "lua_ls",
 })
 
@@ -576,19 +546,15 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
--- Make Neovim's background transparent so any terminal's background shows through.
--- This is applied once at startup and re-applied after every :colorscheme change,
--- because colorscheme files and plugins can re-add backgrounds at any time.
+-- Blend Neovim's background with Alacritty's background.
+-- Applied (and re-applied after every colorscheme change) via the autocmd below.
 local function transparent_background()
-  local groups = {
-    "Normal", "NormalNC",        -- main editor panes
-    "NormalFloat", "FloatBorder",-- hover docs, diagnostics, blink.cmp float
-    "SignColumn",                -- gutter (git signs, diagnostics icons)
-    "EndOfBuffer",               -- the ~ lines below file content
-    "StatusLine", "StatusLineNC",-- status bar (lualine draws over this, but just in case)
-    "TabLine", "TabLineFill",    -- buffer/tab bar
-  }
-  for _, group in ipairs(groups) do
+  for _, group in ipairs({
+    "Normal",
+    "NormalNC",
+    "SignColumn",
+    "EndOfBuffer",
+  }) do
     vim.api.nvim_set_hl(0, group, { bg = "none" })
   end
 end
@@ -742,206 +708,13 @@ end
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "java",
   callback = function(args)
-    local buf = args.buf
-    local jdtls = require("jdtls")
-
-    -- ── Workspace (per-project, so different projects don't share state) ───
-    local root = vim.fs.root(buf, {
-      "mvnw", "gradlew", "pom.xml",
-      "build.gradle", "build.gradle.kts",
-      "settings.gradle", "settings.gradle.kts",
-      ".git",
-    }) or vim.fn.getcwd()
-
-    local workspace = vim.fs.joinpath(
-      vim.fn.stdpath("data"),
-      "jdtls-workspaces",
-      vim.fn.sha256(root):sub(1, 16)
-    )
-    vim.fn.mkdir(workspace, "p")
-
-    -- ── Optional extension bundles ─────────────────────────────────────────
-    -- java-debug: enables DAP debugging via nvim-dap
-    --   Download: https://github.com/microsoft/java-debug/releases
-    --   Extract to: %LOCALAPPDATA%\nvim-tools\java-debug\
-    local bundles = {}
-    local debug_jar = vim.fn.glob(
-      vim.fs.joinpath(nvim_tools, "java-debug", "server",
-        "com.microsoft.java.debug.plugin-*.jar"), true)
-    if debug_jar ~= "" then
-      vim.list_extend(bundles, { debug_jar })
-    end
-
-    -- java-test: enables running JUnit tests from Neovim
-    --   Download: https://github.com/microsoft/vscode-java-test/releases
-    --   Extract to: %LOCALAPPDATA%\nvim-tools\java-test\
-    local test_jars = vim.split(
-      vim.fn.glob(vim.fs.joinpath(nvim_tools, "java-test", "extension", "server", "*.jar"), true),
-      "\n", { trimempty = true })
-    vim.list_extend(bundles, test_jars)
-
-    -- ── Lombok support ─────────────────────────────────────────────────────
-    -- Lombok annotations (@Getter, @Builder, etc.) need the agent at startup.
-    --   Download lombok.jar from: https://projectlombok.org/download
-    --   Place at: %LOCALAPPDATA%\nvim-tools\lombok\lombok.jar
-    local lombok_jar = vim.fs.joinpath(nvim_tools, "lombok", "lombok.jar")
-    local lombok_arg = vim.uv.fs_stat(lombok_jar)
-        and ("-javaagent:" .. lombok_jar)
-        or nil
-
-    -- ── Build the jdtls cmd ────────────────────────────────────────────────
-    -- Note: JDTLS itself requires Java 17+ (we use Java 21) to launch the server.
-    local cmd = {
-      java21,
-      "-Declipse.application=org.eclipse.jdt.ls.core.id1",
-      "-Dosgi.bundles.defaultStartLevel=4",
-      "-Declipse.product=org.eclipse.jdt.ls.core.product",
-      "-Dlog.protocol=true",
-      "-Dlog.level=ALL",
-      "-Xmx1g",
-      "--add-modules=ALL-SYSTEM",
-      "--add-opens", "java.base/java.util=ALL-UNNAMED",
-      "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-      "-jar", jdtls_launcher,
-      "-configuration", vim.fs.joinpath(jdtls_home, "config_win"),
-      "-data", workspace,
-    }
-    if lombok_arg then
-      table.insert(cmd, 2, lombok_arg) -- insert after java21
-    end
-
-    -- ── Start (or re-attach to) jdtls ─────────────────────────────────────
-    jdtls.start_or_attach({
-      cmd = cmd,
-      root_dir = root,
-      settings = {
-        java = {
-          signatureHelp = { enabled = true },
-          contentProvider = { preferred = "fernflower" }, -- decompiler
-          completion = {
-            favoriteStaticMembers = {
-              "org.junit.Assert.*",
-              "org.junit.Assume.*",
-              "org.junit.jupiter.api.Assertions.*",
-              "org.junit.jupiter.api.Assumptions.*",
-              "org.junit.jupiter.api.DynamicContainer.*",
-              "org.junit.jupiter.api.DynamicTest.*",
-            },
-            importOrder = { "java", "javax", "com", "org" },
-          },
-          sources = {
-            organizeImports = {
-              starThreshold = 9999,
-              staticStarThreshold = 9999,
-            },
-          },
-          codeGeneration = {
-            toString = { template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}" },
-            useBlocks = true,
-          },
-          format = { enabled = true },
-        },
-      },
-      init_options = {
-        bundles = bundles,
-      },
-      capabilities = (function()
-        local ok_b, b = pcall(require, "blink.cmp")
-        return ok_b and b.get_lsp_capabilities() or vim.lsp.protocol.make_client_capabilities()
-      end)(),
-      on_attach = function(client, bufnr)
-        -- Enable DAP if java-debug bundle was loaded
-        if #bundles > 0 then
-          jdtls.setup_dap({ hotcodereplace = "auto" })
-        end
-
-        local function map(lhs, rhs, desc)
-          vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc })
-        end
-        local function vmap(lhs, rhs, desc)
-          vim.keymap.set("v", lhs, rhs, { buffer = bufnr, desc = desc })
-        end
-
-        -- ── Java-only LSP keymaps ──────────────────────────────────────────
-        map("<leader>oi", jdtls.organize_imports,          "Organize imports")
-        map("<leader>tc", jdtls.test_class,                "Run test class")
-        map("<leader>tm", jdtls.test_nearest_method,       "Run nearest test method")
-
-        -- Refactoring
-        map("<leader>rv", jdtls.extract_variable,          "Extract variable")
-        map("<leader>rm", jdtls.extract_method,            "Extract method")
-        map("<leader>rc", jdtls.extract_constant,          "Extract constant")
-        vmap("<leader>rv", function() jdtls.extract_variable(true) end, "Extract variable (selection)")
-        vmap("<leader>rm", function() jdtls.extract_method(true) end,   "Extract method (selection)")
-
-        -- Code generation (via code actions — opens a picker)
-        map("<leader>jg", function()
-          vim.lsp.buf.code_action({
-            context = { only = { "source" }, diagnostics = {} },
-          })
-        end, "Generate code (toString/hashCode/getters…)")
-
-        -- ── DAP debugging keymaps ──────────────────────────────────────────
-        local dap_ok, dap = pcall(require, "dap")
-        if dap_ok then
-          map("<F9>",  dap.toggle_breakpoint,  "Toggle breakpoint")
-          map("<F10>", dap.step_over,          "Step over")
-          map("<F11>", dap.step_into,          "Step into")
-          map("<F12>", dap.step_out,           "Step out")
-          map("<F8>",  dap.continue,           "Continue / Start debugger")
-          map("<leader>db", dap.toggle_breakpoint, "Toggle breakpoint")
-          map("<leader>dc", dap.continue,          "Continue debug")
-          map("<leader>dx", dap.terminate,         "Terminate debug session")
-          map("<leader>dr", function() dap.repl.open() end, "Open debug REPL")
-          map("<leader>du", function()
-            local dapui_ok, dapui = pcall(require, "dapui")
-            if dapui_ok then dapui.toggle() end
-          end, "Toggle debug UI")
-        end
-
-        -- ── Gradle task picker ────────────────────────────────────────────
-        map("<leader>jt", function()
-          local project_root, marker = find_java_project_root()
-          if not project_root then
-            vim.notify("No Gradle/Maven project found", vim.log.levels.WARN)
-            return
-          end
-
-          local is_gradle = marker and marker:find("gradle")
-          local tasks_cmd
-          if is_gradle then
-            tasks_cmd = marker == "gradlew.bat"
-                and "gradlew.bat tasks --all"
-                or  "./gradlew tasks --all"
-          else
-            tasks_cmd = "mvn help:describe -Dcmd=process-test-resources 2>/dev/null; mvn help:all-profiles"
-          end
-
-          -- Capture task list and let Telescope pick from them
-          local output = vim.fn.systemlist(tasks_cmd, nil, 1)
-          local tasks = {}
-          for _, line in ipairs(output) do
-            local task = line:match("^([%w:%-]+)%s%-")
-            if task then table.insert(tasks, task) end
-          end
-
-          if #tasks == 0 then
-            vim.notify("No tasks found (run `:!gradlew tasks` manually)", vim.log.levels.WARN)
-            return
-          end
-
-          vim.ui.select(tasks, { prompt = "Gradle task:" }, function(choice)
-            if choice then
-              local run_cmd = (marker == "gradlew.bat" and "gradlew.bat " or "./gradlew ") .. choice
-              open_terminal_split(run_cmd, project_root)
-            end
-          end)
-        end, "Pick and run Gradle/Maven task")
-      end,
+    vim.keymap.set("n", "<leader>r", run_java_file, {
+      buffer = args.buf,
+      desc = "Run Java application",
     })
-
-    -- ── Run / F5 (kept from original config) ──────────────────────────────
-    vim.keymap.set("n", "<leader>r", run_java_file, { buffer = buf, desc = "Run Java application" })
-    vim.keymap.set("n", "<F5>",      run_java_file, { buffer = buf, desc = "Run Java application" })
+    vim.keymap.set("n", "<F5>", run_java_file, {
+      buffer = args.buf,
+      desc = "Run Java application",
+    })
   end,
 })
