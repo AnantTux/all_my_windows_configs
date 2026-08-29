@@ -3,8 +3,10 @@
 	name = AnantTux
 [safe]
 	directory = D:/Dev Stuff
+	directory = D:/Auto-hot Key Scripts
 [core]
 	pager = delta
+	autocrlf = false
 [interactive]
 	diffFilter = delta --color-only
 [delta]

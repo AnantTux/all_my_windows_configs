@@ -22,6 +22,9 @@ WINDOWS CONFIGURATIONS
 Backup: Windows\Alacritty\alacritty.toml
 Paste at: C:\Users\kaura\AppData\Roaming\alacritty\alacritty.toml
 
+Backup: Windows\Zellij\config.kdl and Windows\Zellij\powershell-no-logo.cmd
+Paste at: C:\Users\kaura\AppData\Roaming\Zellij\config\
+
 Backup: Windows\Neovim\init.lua
 Paste at: C:\Users\kaura\AppData\Local\nvim\init.lua
 

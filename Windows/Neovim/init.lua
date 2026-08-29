@@ -1,6 +1,11 @@
 -- Small, practical Neovim baseline.
 vim.g.mapleader = " "
 
+-- Global tool paths (defined at top so all plugins and LSP configs can access them)
+local node = "C:/Program Files/nodejs/node.exe"
+local npm_modules = vim.fs.joinpath(vim.fn.expand("$APPDATA"), "npm", "node_modules")
+local nvim_tools = vim.fs.joinpath(vim.fn.expand("$LOCALAPPDATA"), "nvim-tools")
+
 -- Tree-sitter's compiler integration expects CC to name one executable.
 -- Zig needs a subcommand, so use the wrapper instead of `CC = "zig cc"`.
 local zig_cc_wrapper = vim.fs.joinpath(vim.fn.stdpath("config"), "bin", "zig-cc.cmd")
@@ -128,6 +133,30 @@ require("lazy").setup({
       sources = {
         default = { "lsp", "path", "snippets", "buffer" },
         providers = {
+          -- JDTLS can return Windows CRLF inside snippets. Neovim already handles
+          -- newlines, so remove the raw CR before Blink previews or inserts them.
+          lsp = {
+            transform_items = function(_, items)
+              local function normalize(text)
+                return type(text) == "string" and text:gsub("\r", "") or text
+              end
+
+              for _, item in ipairs(items) do
+                item.insertText = normalize(item.insertText)
+                item.textEditText = normalize(item.textEditText)
+
+                if item.textEdit then
+                  item.textEdit.newText = normalize(item.textEdit.newText)
+                end
+
+                for _, edit in ipairs(item.additionalTextEdits or {}) do
+                  edit.newText = normalize(edit.newText)
+                end
+              end
+
+              return items
+            end,
+          },
           path = {
             enabled = function()
               local line = vim.api.nvim_get_current_line()
@@ -296,7 +325,97 @@ require("lazy").setup({
     dependencies = { "mfussenegger/nvim-dap", "nvim-treesitter/nvim-treesitter" },
     opts = {},
   },
+
+  -- 16. Competitive programming helper (Codeforces, LeetCode, AtCoder via Competitive Companion)
+  {
+    "xeluxee/competitest.nvim",
+    dependencies = "muniftanjim/nui.nvim",
+    cmd = { "CompetiTest" },
+    keys = {
+      { "<leader>cr", "<cmd>CompetiTest run<cr>", desc = "Run competitive testcases" },
+      { "<leader>cp", "<cmd>CompetiTest receive problem<cr>", desc = "Receive problem (Competitive Companion)" },
+      { "<leader>cc", "<cmd>CompetiTest receive contest<cr>", desc = "Receive contest (Competitive Companion)" },
+      { "<leader>ca", "<cmd>CompetiTest add_testcase<cr>", desc = "Add testcase" },
+      { "<leader>ce", "<cmd>CompetiTest edit_testcase<cr>", desc = "Edit testcase" },
+      { "<leader>cd", "<cmd>CompetiTest delete_testcase<cr>", desc = "Delete testcase" },
+    },
+    opts = {
+      received_files_extension = "java",
+      evaluate_template_modifiers = true,
+      template_file = {
+        java = vim.fs.joinpath(vim.fn.stdpath("config"), "templates", "template.java"),
+      },
+
+      -- ── Path layout: CP_ROOT / ContestID / ProblemLetter / Main.java ────────
+      -- Each problem lives in its own subfolder so:
+      --   • public class Main matches the filename Main.java  → no JDTLS red squiggle
+      --   • JDTLS uses the problem folder as root             → no package mismatch
+      --   • Codeforces sees "public class Main"               → submission accepted
+      --
+      -- HARDCODED: always goes to E:\CodeForces regardless of where nvim was opened.
+      received_problems_path = function(task, file_extension)
+        local cp_root = "E:/CodeForces"
+        local url = task.url or ""
+        local contest_id, prob_letter = url:match("/problemset/problem/(%d+)/([%w]+)")
+        if not contest_id then
+          contest_id, prob_letter = url:match("/contest/(%d+)/problem/([%w]+)")
+        end
+
+        local contest_dir
+        if contest_id then
+          contest_dir = contest_id
+        elseif task.group and task.group ~= "" then
+          contest_dir = task.group:gsub("Codeforces %- ", ""):gsub("[^%w_%-]", "_"):gsub("_+", "_"):gsub("^_", ""):gsub("_$", "")
+        else
+          contest_dir = "Practice"
+        end
+
+        local prob_letter_clean = prob_letter
+          or (task.name and task.name:match("^([%w]+)%s*%."))
+          or (task.name and task.name:match("^([%w]+)"))
+          or "A"
+
+        -- Always creates: E:\CodeForces\1903\A\Main.java
+        return string.format("%s/%s/%s/Main.%s",
+          cp_root, contest_dir, prob_letter_clean, file_extension)
+      end,
+
+      -- For receiving entire contests at once
+      received_contests_directory = "E:/CodeForces",
+      received_contests_problems_path = function(task, file_extension)
+        local url = task.url or ""
+        local contest_id, prob_letter = url:match("/problemset/problem/(%d+)/([%w]+)")
+        if not contest_id then
+          contest_id, prob_letter = url:match("/contest/(%d+)/problem/([%w]+)")
+        end
+        local prob = prob_letter
+          or (task.name and task.name:match("^([%w]+)%s*%."))
+          or (task.name and task.name:match("^([%w]+)"))
+          or "A"
+        -- Creates: ContestID/ProblemLetter/Main.java inside received_contests_directory
+        local contest_dir = contest_id or "Contest"
+        return string.format("%s/%s/Main.%s", contest_dir, prob, file_extension)
+      end,
+
+      testcases_use_single_file = true,
+      testcases_single_file_format = "$(FNOEXT).testcases",
+      runner_ui = { interface = "split" },
+      compile_command = {
+        java = { exec = "javac", args = { "$(FNAME)" } },
+        c    = { exec = "gcc",   args = { "-Wall", "$(FNAME)", "-o", "$(FNOEXT).exe" } },
+        cpp  = { exec = "g++",   args = { "-Wall", "$(FNAME)", "-o", "$(FNOEXT).exe" } },
+      },
+      run_command = {
+        java   = { exec = "java",   args = { "Main" } },
+        c      = { exec = "./$(FNOEXT).exe" },
+        cpp    = { exec = "./$(FNOEXT).exe" },
+        python = { exec = "python", args = { "$(FNAME)" } },
+      },
+    },
+  },
 })
+
+
 
 local opt = vim.opt
 
@@ -381,10 +500,6 @@ end
 diagnostic_colours()
 
 -- Built-in LSP servers: no Neovim plugin manager required.
-local node = "C:/Program Files/nodejs/node.exe"
-local npm_modules = vim.fs.joinpath(vim.fn.expand("$APPDATA"), "npm", "node_modules")
-local nvim_tools = vim.fs.joinpath(vim.fn.expand("$LOCALAPPDATA"), "nvim-tools")
-
 local function npm_server(...)
   return { node, vim.fs.joinpath(npm_modules, ...), "--stdio" }
 end
@@ -639,6 +754,22 @@ local format_on_save_filetypes = {
 
 vim.api.nvim_create_autocmd("BufWritePre", {
   callback = function(args)
+    -- Prevent raw carriage returns from malformed Windows LSP snippets being saved.
+    if vim.bo[args.buf].filetype == "java" then
+      local lines = vim.api.nvim_buf_get_lines(args.buf, 0, -1, false)
+      local changed = false
+      for index, line in ipairs(lines) do
+        local normalized, count = line:gsub("\r", "")
+        if count > 0 then
+          lines[index] = normalized
+          changed = true
+        end
+      end
+      if changed then
+        vim.api.nvim_buf_set_lines(args.buf, 0, -1, false, lines)
+      end
+    end
+
     if format_on_save_filetypes[vim.bo[args.buf].filetype] then
       smart_format(args.buf, { timeout_ms = 2000 })
     end
@@ -746,12 +877,14 @@ vim.api.nvim_create_autocmd("FileType", {
     local jdtls = require("jdtls")
 
     -- ── Workspace (per-project, so different projects don't share state) ───
+    -- For Gradle/Maven/Git projects, use the project root.
+    -- For standalone CP files (no build system markers), use the FILE'S OWN FOLDER
+    -- so JDTLS treats it as a default-package root — no "package mismatch" errors!
     local root = vim.fs.root(buf, {
       "mvnw", "gradlew", "pom.xml",
       "build.gradle", "build.gradle.kts",
       "settings.gradle", "settings.gradle.kts",
-      ".git",
-    }) or vim.fn.getcwd()
+    }) or vim.fn.expand("%:p:h")   -- ← file's own dir, NOT getcwd()
 
     local workspace = vim.fs.joinpath(
       vim.fn.stdpath("data"),
