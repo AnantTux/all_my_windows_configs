@@ -41,6 +41,9 @@ the large downloaded language-server binaries are intentionally not duplicated.
 Backup: Windows\PowerShell\Microsoft.PowerShell_profile.ps1
 Paste at: C:\Users\kaura\OneDrive\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
 
+Backup: Windows\PowerShell\WindowsPowerShell_profile.ps1
+Paste at: C:\Users\kaura\OneDrive\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1
+
 Backup: Windows\Starship\starship.toml
 Paste at: C:\Users\kaura\.config\starship.toml
 
@@ -50,7 +53,7 @@ Paste at: C:\Users\kaura\.gitconfig
 Backup: Windows\Yazi\keymap.toml
 Paste at: C:\Users\kaura\AppData\Roaming\yazi\config\keymap.toml
 Backup folder: Windows\AutoHotkey
-Paste its files into: D:\Auto-hot Key Scripts
+Paste its files into: D:\Scripts\AutoHotkey
 
 This includes Combined_shortcuts.ahk, VirtualDesktopAccessor.dll, and the
 ChatGPT AutoHotkey Utility folder. Keep the DLL beside Combined_shortcuts.ahk.

@@ -311,7 +311,7 @@ web_client {
 // Choose the theme that is specified in the themes section.
 // Default: default
 // 
-// theme "dracula"
+theme "vscode-black"
  
 // Theme to use when the host terminal reports a dark color palette.
 // Requires `theme_light` to also be set; otherwise `theme` is used.
@@ -592,3 +592,20 @@ show_startup_tips false
 // typically work best. Set to 0 to use the number of (physical) CPU cores.
 // Note: This only applies to web clients at the moment.
 // client_async_worker_tasks 4
+
+// Matches the Alacritty VS Code-inspired neutral-black palette.
+themes {
+    vscode-black {
+        fg "#d4d4d4"
+        bg "#0f1113"
+        black "#17191c"
+        red "#ff6b6b"
+        green "#8bd49c"
+        yellow "#ffd700"
+        blue "#82aaff"
+        magenta "#c792ea"
+        cyan "#89ddff"
+        white "#d4d4d4"
+        orange "#e879d2"
+    }
+}

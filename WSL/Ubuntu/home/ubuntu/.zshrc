@@ -1,7 +1,18 @@
+# Lazy NVM: Node, npm, npx, and nvm load on first use instead of delaying every shell prompt.
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+__kaura_load_nvm() {
+  unset -f nvm node npm npx
+  if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+    source "$NVM_DIR/nvm.sh"
+  else
+    printf "NVM was not found at %s\n" "$NVM_DIR" >&2
+    return 127
+  fi
+}
+nvm()  { __kaura_load_nvm && nvm "$@"; }
+node() { __kaura_load_nvm && node "$@"; }
+npm()  { __kaura_load_nvm && npm "$@"; }
+npx()  { __kaura_load_nvm && npx "$@"; }
 
 export ZSH="/home/ubuntu/.oh-my-zsh"
 ZSH_THEME="neon-cyberpunk"

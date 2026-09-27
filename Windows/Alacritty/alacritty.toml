@@ -4,6 +4,7 @@ working_directory = "C:\\Users\\kaura"
 
 [env]
 TERM = "xterm-256color"
+COLORTERM = "truecolor"
 
 [window]
 startup_mode = "Maximized"

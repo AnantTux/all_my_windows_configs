@@ -4,6 +4,9 @@ Set-Alias lvim 'C:\Users\kaura\.local\bin\lvim.ps1'
 # UTF-8 output for modern command-line tools.
 $OutputEncoding = [System.Text.UTF8Encoding]::new()
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
+$env:COLORTERM = "truecolor"
+Remove-Item Env:NO_COLOR -ErrorAction SilentlyContinue
+$env:STARSHIP_CONFIG = Join-Path $env:USERPROFILE '.config\starship.toml'
 
 # Yazi uses Git for Windows' file.exe for reliable MIME-type detection.
 $yaziFileOne = 'C:\Program Files\Git\usr\bin\file.exe'
@@ -17,15 +20,34 @@ if ((Test-Path -LiteralPath $bottomBin) -and $env:Path -notlike "*$bottomBin*") 
     $env:Path = "$bottomBin;$env:Path"
 }
 
-# WinGet's portable-package link folder is missing on this machine. Discover
-# the real executable directories so tools such as Yazi, eza, fzf and any
-# future portable install (for example zellij) are available in every shell.
+# Cache WinGet portable-package executable directories. The cache refreshes
+# automatically when the package root changes or a cached directory vanishes.
 $wingetPackageRoot = Join-Path $env:LOCALAPPDATA 'Microsoft\WinGet\Packages'
-if (Test-Path -LiteralPath $wingetPackageRoot) {
-    $wingetToolDirectories = Get-ChildItem -LiteralPath $wingetPackageRoot -Filter '*.exe' -File -Recurse -ErrorAction SilentlyContinue |
-        Select-Object -ExpandProperty DirectoryName -Unique
+$wingetPathCache = Join-Path $env:USERPROFILE '.config\powershell\winget-tool-directories.txt'
 
-    foreach ($toolDirectory in $wingetToolDirectories) {
+function Update-KauraWingetToolPathCache {
+    if (-not (Test-Path -LiteralPath $wingetPackageRoot)) { return }
+
+    New-Item -ItemType Directory -Path (Split-Path -Parent $wingetPathCache) -Force | Out-Null
+    $directories = Get-ChildItem -LiteralPath $wingetPackageRoot -Filter '*.exe' -File -Recurse -ErrorAction SilentlyContinue |
+        Select-Object -ExpandProperty DirectoryName -Unique
+    $directories | Set-Content -LiteralPath $wingetPathCache -Encoding utf8
+}
+
+if (Test-Path -LiteralPath $wingetPackageRoot) {
+    $cacheNeedsRefresh = -not (Test-Path -LiteralPath $wingetPathCache)
+    if (-not $cacheNeedsRefresh) {
+        $cacheNeedsRefresh = (Get-Item -LiteralPath $wingetPathCache).LastWriteTimeUtc -lt (Get-Item -LiteralPath $wingetPackageRoot).LastWriteTimeUtc
+    }
+
+    $wingetToolDirectories = if ($cacheNeedsRefresh) {
+        Update-KauraWingetToolPathCache
+        Get-Content -LiteralPath $wingetPathCache -ErrorAction SilentlyContinue
+    } else {
+        Get-Content -LiteralPath $wingetPathCache -ErrorAction SilentlyContinue
+    }
+
+    foreach ($toolDirectory in $wingetToolDirectories | Where-Object { Test-Path -LiteralPath $_ -PathType Container }) {
         if (($env:Path -split ';') -notcontains $toolDirectory) {
             $env:Path = "$toolDirectory;$env:Path"
         }

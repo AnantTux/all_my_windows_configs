@@ -3,6 +3,7 @@
 #WinActivateForce
 
 LastActiveWindowByDesktop := Map()
+DesktopTransitionDepth := 0
 
 ; Automatically register this script to run when Windows starts
 EnsureStartupShortcut()
@@ -20,7 +21,8 @@ SetTimer(RememberActiveWindow, 200)
 ; APPLICATION SHORTCUTS
 ; ============================================================
 
-; Win + E opens File Pilot and focuses its window
+; Win + E opens File Pilot. If it is already running, duplicate its current
+; tab into a new File Pilot window instead of trying to switch to it.
 #e::OpenFilePilot()
 
 ; Win + F opens Edge in InPrivate mode
@@ -114,6 +116,13 @@ EnsureStartupShortcut() {
         arguments := Chr(34) A_ScriptFullPath Chr(34)
     }
 
+    ; Keep an existing correct shortcut, but repair missing/stale shortcuts.
+    try {
+        FileGetShortcut(shortcutPath, &existingTarget, &existingDir, &existingArgs)
+        if (existingTarget = target && existingDir = A_ScriptDir && existingArgs == arguments)
+            return
+    }
+
     try {
         FileCreateShortcut(
             target,
@@ -165,7 +174,7 @@ WatchNotepadWindows(*) {
 ; ============================================================
 
 OpenFilePilot() {
-    ; Do not launch the app until the shortcut keys are released.
+    ; Do not send Ctrl+N until the shortcut keys are released.
     KeyWait("e")
     WaitForWinRelease()
 
@@ -176,11 +185,69 @@ OpenFilePilot() {
         return
     }
 
-    LaunchAndFocusApp(
-        filePilotPath,
-        "ahk_exe FPilot.exe",
-        true
-    )
+    ; File Pilot's Ctrl+N command duplicates the active tab into a new window.
+    ; Avoid FocusWindowAcrossDesktops here: its virtual-desktop transition is
+    ; the path that can leave File Pilot in the unusable task-switcher state.
+    ; File Pilot can leave a maximized window parked off-screen. Windows then
+    ; shows it as a black Alt+Tab thumbnail even though it cannot be activated.
+    ; Hide only those parked windows; normal File Pilot windows are untouched.
+    HideParkedFilePilotWindows()
+    mainWindow := FindOnScreenFilePilotWindow()
+
+    if mainWindow {
+        windowsBeforeNew := Map()
+
+        for hwnd in WinGetList("ahk_exe FPilot.exe")
+            windowsBeforeNew[hwnd] := true
+
+        if ForceActivateWindow(mainWindow) {
+            Sleep(100)
+            Send("^n")
+
+            newWindow := WaitForNewWindow(
+                "ahk_exe FPilot.exe",
+                windowsBeforeNew,
+                2500
+            )
+
+            if newWindow
+                ForceActivateWindow(newWindow)
+
+            return
+        }
+    }
+
+    ; First launch, or a recovery fallback if the running window cannot be
+    ; activated. File Pilot will handle the second invocation itself.
+    LaunchAndFocusApp(filePilotPath, "ahk_exe FPilot.exe", false)
+}
+
+
+FindOnScreenFilePilotWindow() {
+    for hwnd in WinGetList("ahk_exe FPilot.exe") {
+        try {
+            WinGetPos(&x, &y, &width, &height, "ahk_id " hwnd)
+
+            ; Windows parks virtual-desktop/failed windows near -16000. Keep
+            ; support for a real monitor positioned to the left or above 0.
+            if (width > 0 && height > 0 && x > -15000 && y > -15000)
+                return hwnd
+        }
+    }
+
+    return 0
+}
+
+
+HideParkedFilePilotWindows() {
+    for hwnd in WinGetList("ahk_exe FPilot.exe") {
+        try {
+            WinGetPos(&x, &y, &width, &height, "ahk_id " hwnd)
+
+            if (width > 0 && height > 0 && x <= -15000 && y <= -15000)
+                WinHide("ahk_id " hwnd)
+        }
+    }
 }
 
 
@@ -195,10 +262,32 @@ OpenAlacritty() {
         false
     )
 
-    ; Alacritty can create its window before it is ready to accept focus.
-    ; Retry after this hotkey handler has returned and Windows has settled.
+    ; Alacritty can expose its window before its renderer and input surface are
+    ; ready. Retry activation only while it remains inactive.
     if alacrittyWindow
-        SetTimer(ForceActivateWindow.Bind(alacrittyWindow), -250)
+        SetTimer(ActivateAlacrittyWhenReady.Bind(alacrittyWindow), -180)
+}
+
+
+ActivateAlacrittyWhenReady(hwnd, attempt := 1) {
+    if !DllCall("User32\IsWindow", "Ptr", hwnd, "Int")
+        return false
+
+    ; Zellij may create its first tab after the outer Alacritty window has
+    ; initially reported itself active. Keep checking briefly and reactivate it
+    ; only if Windows has moved focus away during that startup window.
+    if !WinActive("ahk_id " hwnd)
+        ForceActivateWindow(hwnd)
+
+    ; The first Alacritty/Zellij launch after Windows starts can take longer
+    ; than the usual renderer startup. Keep the retry window short and bounded
+    ; while still restoring focus if startup briefly steals it.
+    if (attempt < 7) {
+        retryDelay := 120 + (attempt * 160)
+        SetTimer(ActivateAlacrittyWhenReady.Bind(hwnd, attempt + 1), -retryDelay)
+    }
+
+    return WinActive("ahk_id " hwnd) != 0
 }
 
 LaunchAndFocusApp(command, windowSelector, reuseExisting := false) {
@@ -209,8 +298,12 @@ LaunchAndFocusApp(command, windowSelector, reuseExisting := false) {
 
     if (reuseExisting && existingWindows.Count > 0) {
         for hwnd in existingWindows {
-            FocusWindowAcrossDesktops(hwnd)
-            return hwnd
+            ; Do not assume an activation succeeded.  Some applications expose
+            ; an auxiliary top-level window; if it cannot be foregrounded,
+            ; re-running the application lets its own single-instance handler
+            ; bring the real window forward.
+            if FocusWindowAcrossDesktops(hwnd)
+                return hwnd
         }
     }
 
@@ -227,16 +320,16 @@ LaunchAndFocusApp(command, windowSelector, reuseExisting := false) {
     newWindow := WaitForNewWindow(windowSelector, existingWindows, 8000)
 
     if newWindow {
-        FocusWindowAcrossDesktops(newWindow)
-        return newWindow
+        FocusWindowAcrossDesktops(newWindow, &desktopSwitchFailed)
+        return desktopSwitchFailed ? 0 : newWindow
     }
 
     ; Some single-instance applications reuse an existing window.
     windows := WinGetList(windowSelector)
 
     if windows.Length {
-        FocusWindowAcrossDesktops(windows[1])
-        return windows[1]
+        FocusWindowAcrossDesktops(windows[1], &desktopSwitchFailed)
+        return desktopSwitchFailed ? 0 : windows[1]
     }
 
     return 0
@@ -259,35 +352,40 @@ WaitForNewWindow(windowSelector, existingWindows, timeoutMs) {
 }
 
 
-FocusWindowAcrossDesktops(hwnd) {
+FocusWindowAcrossDesktops(hwnd, &desktopSwitchFailed := false) {
+    desktopSwitchFailed := false
+    BeginDesktopTransition()
     try {
-        getWindowDesktopProc := GetVDAProc("GetWindowDesktopNumber")
-        getCurrentProc := GetVDAProc("GetCurrentDesktopNumber")
-        goToDesktopProc := GetVDAProc("GoToDesktopNumber")
+        switchRequested := false
+        try {
+            getWindowDesktopProc := GetVDAProc("GetWindowDesktopNumber")
+            getCurrentProc := GetVDAProc("GetCurrentDesktopNumber")
+            goToDesktopProc := GetVDAProc("GoToDesktopNumber")
 
-        windowDesktop := DllCall(
-            getWindowDesktopProc,
-            "Ptr", hwnd,
-            "Int"
-        )
+            windowDesktop := DllCall(getWindowDesktopProc, "Ptr", hwnd, "Int")
+            currentDesktop := DllCall(getCurrentProc, "Int")
 
-        currentDesktop := DllCall(getCurrentProc, "Int")
+            if (windowDesktop >= 0 && currentDesktop != windowDesktop) {
+                switchRequested := true
+                result := DllCall(goToDesktopProc, "Int", windowDesktop, "Int")
+                if (result = -1)
+                    throw Error("Windows could not switch to the desktop.")
 
-        if (windowDesktop >= 0 && currentDesktop != windowDesktop) {
-            RememberActiveWindow()
-
-            DllCall(
-                goToDesktopProc,
-                "Int", windowDesktop,
-                "Int"
-            )
-
-            WaitUntilDesktopIsActive(windowDesktop)
-            Sleep(150)
+                RequireDesktopIsActive(windowDesktop)
+                Sleep(150)
+            }
+        } catch as error {
+            if switchRequested {
+                desktopSwitchFailed := true
+                ShowDesktopError(error)
+                return false
+            }
         }
-    }
 
-    ForceActivateWindow(hwnd)
+        return ForceActivateWindow(hwnd)
+    } finally {
+        EndDesktopTransition()
+    }
 }
 
 
@@ -299,13 +397,16 @@ ForceActivateWindow(hwnd) {
         if (WinGetMinMax("ahk_id " hwnd) = -1)
             WinRestore("ahk_id " hwnd)
 
+        WinShow("ahk_id " hwnd)
         WinActivate("ahk_id " hwnd)
+        DllCall("User32\SetForegroundWindow", "Ptr", hwnd)
 
         if WinWaitActive("ahk_id " hwnd, , 1)
             return true
 
         Sleep(80)
         WinActivate("ahk_id " hwnd)
+        DllCall("User32\SetForegroundWindow", "Ptr", hwnd)
 
         return WinWaitActive("ahk_id " hwnd, , 1) != 0
     } catch {
@@ -318,10 +419,35 @@ ForceActivateWindow(hwnd) {
 ; VIRTUAL DESKTOP FOCUS MEMORY
 ; ============================================================
 
-RememberActiveWindow(*) {
-    global LastActiveWindowByDesktop
+BeginDesktopTransition() {
+    global DesktopTransitionDepth
 
+    ; Only this short state update is critical; desktop waits remain interruptible.
+    previousCritical := Critical("On")
     try {
+        RememberActiveWindow()
+        DesktopTransitionDepth += 1
+    } finally {
+        Critical(previousCritical)
+    }
+}
+
+
+EndDesktopTransition() {
+    global DesktopTransitionDepth
+    DesktopTransitionDepth -= 1
+}
+
+
+RememberActiveWindow(*) {
+    global LastActiveWindowByDesktop, DesktopTransitionDepth
+
+    ; Prevent a partially completed sample from resuming after a desktop switch.
+    previousCritical := Critical("On")
+    try {
+        if DesktopTransitionDepth
+            return
+
         hwnd := WinGetID("A")
 
         if !IsUsableAppWindow(hwnd)
@@ -332,6 +458,10 @@ RememberActiveWindow(*) {
 
         if (desktopNumber >= 0)
             LastActiveWindowByDesktop[desktopNumber] := hwnd
+    } catch {
+        ; No active app or desktop API available; keep the previous sample.
+    } finally {
+        Critical(previousCritical)
     }
 }
 
@@ -352,7 +482,7 @@ IsUsableAppWindow(hwnd) {
         return false
     }
 
-    ignoredClasses := Map(
+    static ignoredClasses := Map(
         "Progman", true,
         "WorkerW", true,
         "Shell_TrayWnd", true,
@@ -422,6 +552,26 @@ IsWindowOnDesktop(hwnd, desktopNumber) {
 }
 
 
+RequireDesktopIsActive(desktopNumber) {
+    if !WaitUntilDesktopIsActive(desktopNumber)
+        throw Error("Timed out waiting for desktop " (desktopNumber + 1) ".")
+}
+
+
+EnsureDesktopCount(targetDesktop, desktopCount) {
+    if (desktopCount >= targetDesktop)
+        return false
+
+    Loop (targetDesktop - desktopCount) {
+        Send("^#d")
+        Sleep(350)
+    }
+
+    Sleep(200)
+    return true
+}
+
+
 WaitUntilDesktopIsActive(desktopNumber, timeoutMs := 2500) {
     try {
         getCurrentProc := GetVDAProc("GetCurrentDesktopNumber")
@@ -447,9 +597,8 @@ WaitUntilDesktopIsActive(desktopNumber, timeoutMs := 2500) {
 ; ============================================================
 
 SwitchToDesktop(targetDesktop) {
+    BeginDesktopTransition()
     try {
-        RememberActiveWindow()
-
         getCountProc := GetVDAProc("GetDesktopCount")
         goToDesktopProc := GetVDAProc("GoToDesktopNumber")
         desktopCount := DllCall(getCountProc, "Int")
@@ -459,14 +608,7 @@ SwitchToDesktop(targetDesktop) {
 
         WaitForWinRelease()
 
-        if (desktopCount < targetDesktop) {
-            Loop (targetDesktop - desktopCount) {
-                Send("^#d")
-                Sleep(350)
-            }
-
-            Sleep(200)
-        }
+        EnsureDesktopCount(targetDesktop, desktopCount)
 
         targetIndex := targetDesktop - 1
 
@@ -479,18 +621,19 @@ SwitchToDesktop(targetDesktop) {
         if (result = -1)
             throw Error("Windows could not switch to the desktop.")
 
-        WaitUntilDesktopIsActive(targetIndex)
+        RequireDesktopIsActive(targetIndex)
         RestoreLastActiveWindow(targetIndex)
     } catch as error {
         ShowDesktopError(error)
+    } finally {
+        EndDesktopTransition()
     }
 }
 
 
 SwitchRelativeDesktop(direction) {
+    BeginDesktopTransition()
     try {
-        RememberActiveWindow()
-
         getCountProc := GetVDAProc("GetDesktopCount")
         getCurrentProc := GetVDAProc("GetCurrentDesktopNumber")
         goToDesktopProc := GetVDAProc("GoToDesktopNumber")
@@ -513,10 +656,12 @@ SwitchRelativeDesktop(direction) {
         if (result = -1)
             throw Error("Windows could not switch to the desktop.")
 
-        WaitUntilDesktopIsActive(targetDesktop)
+        RequireDesktopIsActive(targetDesktop)
         RestoreLastActiveWindow(targetDesktop)
     } catch as error {
         ShowDesktopError(error)
+    } finally {
+        EndDesktopTransition()
     }
 }
 
@@ -526,6 +671,7 @@ SwitchRelativeDesktop(direction) {
 ; ============================================================
 
 MoveActiveWindowToDesktop(targetDesktop, followWindow := false) {
+    BeginDesktopTransition()
     try {
         activeWindow := WinGetID("A")
 
@@ -541,17 +687,7 @@ MoveActiveWindowToDesktop(targetDesktop, followWindow := false) {
             throw Error("Could not read the virtual desktops.")
 
         WaitForWinAndShiftRelease()
-        createdDesktops := false
-
-        if (desktopCount < targetDesktop) {
-            Loop (targetDesktop - desktopCount) {
-                Send("^#d")
-                Sleep(350)
-            }
-
-            createdDesktops := true
-            Sleep(200)
-        }
+        createdDesktops := EnsureDesktopCount(targetDesktop, desktopCount)
 
         targetIndex := targetDesktop - 1
 
@@ -575,7 +711,7 @@ MoveActiveWindowToDesktop(targetDesktop, followWindow := false) {
                 "Int"
             )
 
-            WaitUntilDesktopIsActive(targetIndex)
+            RequireDesktopIsActive(targetIndex)
             ForceActivateWindow(activeWindow)
         } else if createdDesktops {
             Sleep(150)
@@ -586,7 +722,7 @@ MoveActiveWindowToDesktop(targetDesktop, followWindow := false) {
                 "Int"
             )
 
-            WaitUntilDesktopIsActive(originalDesktop)
+            RequireDesktopIsActive(originalDesktop)
             RestoreLastActiveWindow(originalDesktop)
         }
 
@@ -594,6 +730,8 @@ MoveActiveWindowToDesktop(targetDesktop, followWindow := false) {
         SetTimer(HideDesktopToolTip, -1200)
     } catch as error {
         ShowDesktopError(error)
+    } finally {
+        EndDesktopTransition()
     }
 }
 
@@ -706,9 +844,9 @@ GoogleSelectedTextInZenPrivate() {
         return
     }
 
-    FocusWindowAcrossDesktops(newWindow)
-
-    WinWaitActive("ahk_id " newWindow, , 3)
+    FocusWindowAcrossDesktops(newWindow, &desktopSwitchFailed)
+    if !desktopSwitchFailed
+        WinWaitActive("ahk_id " newWindow, , 3)
 }
 
 

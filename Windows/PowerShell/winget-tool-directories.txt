@@ -1,0 +1,14 @@
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\ajeetdsouza.zoxide_Microsoft.Winget.Source_8wekyb3d8bbwe
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\ArtifexSoftware.mutool_Microsoft.Winget.Source_8wekyb3d8bbwe\mupdf-1.23.0-windows
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\BurntSushi.ripgrep.MSVC_Microsoft.Winget.Source_8wekyb3d8bbwe\ripgrep-15.2.0-x86_64-pc-windows-msvc
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\chmln.sd_Microsoft.Winget.Source_8wekyb3d8bbwe\sd-v1.1.0-x86_64-pc-windows-msvc
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\dandavison.delta_Microsoft.Winget.Source_8wekyb3d8bbwe\delta-0.19.2-x86_64-pc-windows-msvc
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\eza-community.eza_Microsoft.Winget.Source_8wekyb3d8bbwe
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\Fastfetch-cli.Fastfetch_Microsoft.Winget.Source_8wekyb3d8bbwe
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\JesseDuffield.lazygit_Microsoft.Winget.Source_8wekyb3d8bbwe
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\junegunn.fzf_Microsoft.Winget.Source_8wekyb3d8bbwe
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\LuaLS.lua-language-server_Microsoft.Winget.Source_8wekyb3d8bbwe\bin
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\sharkdp.bat_Microsoft.Winget.Source_8wekyb3d8bbwe\bat-v0.26.1-x86_64-pc-windows-msvc
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\sharkdp.fd_Microsoft.Winget.Source_8wekyb3d8bbwe\fd-v10.4.2-x86_64-pc-windows-msvc
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\sxyazi.yazi_Microsoft.Winget.Source_8wekyb3d8bbwe\yazi-x86_64-pc-windows-msvc
+C:\Users\kaura\AppData\Local\Microsoft\WinGet\Packages\zig.zig_Microsoft.Winget.Source_8wekyb3d8bbwe\zig-x86_64-windows-0.16.0
